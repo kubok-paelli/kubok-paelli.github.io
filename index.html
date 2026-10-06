@@ -113,7 +113,7 @@ p { margin: 0; }
 /* невысокие телефоны (iPhone SE, бюджетные Android): паэльера меньше, чтобы «Сейчас / Далее» было видно сразу */
 @media (max-width: 759px) and (max-height: 700px) { .hero h1 img { width: min(50vw, 190px); } .hero .wrap { gap: 8px; } }
 /* узкие экраны 360px: переключатель зачёта и «Расплюсовка» в одну строку */
-@media (max-width: 380px) { #chgk-box .seg button, #chgk-box .tbtn { padding-inline: 9px; font-size: .8rem; } #chgk-box .tools { gap: 6px; } }
+@media (max-width: 380px) { #chgk-box .tbtn { font-size: .85rem; } }
 @media (max-width: 560px) { .results-head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
 /* телефон боком: шапка не липнет, нижняя панель ниже — больше места таблице */
 @media (max-height: 500px) and (orientation: landscape) {
@@ -185,8 +185,8 @@ p { margin: 0; }
 
 /* Сегменты (подразделы результатов) */
 .seg { display: flex; gap: 4px; padding: 4px; border-radius: 14px; background: var(--surface-2); }
-.seg a, .seg button { flex: 1 1 auto; display: flex; align-items: center; justify-content: center; text-align: center; white-space: nowrap; text-decoration: none; border: 0; background: transparent; color: var(--fg);
-  min-height: 40px; padding: 6px 12px; border-radius: 10px; font: 600 .9rem/1.15 var(--f-ui); cursor: pointer; }
+.seg a, .seg button { flex: 1 1 0; min-width: 0; display: flex; align-items: center; justify-content: center; text-align: center; white-space: nowrap; text-decoration: none; border: 0; background: transparent; color: var(--fg);
+  min-height: 40px; padding: 6px 4px; border-radius: 10px; font: 600 .9rem/1.15 var(--f-ui); cursor: pointer; }
 .seg [aria-current="page"], .seg [aria-pressed="true"] { background: var(--pressed-bg); color: var(--pressed-fg); }
 
 /* Программа */
@@ -267,6 +267,8 @@ tbody tr:last-child td { border-bottom: 0; }
 .tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
 .tbtn { display: inline-flex; align-items: center; justify-content: center; border: 0; background: var(--surface-2); color: var(--fg); min-height: 48px; padding: 8px 14px; border-radius: 14px; font: 600 .9rem/1 var(--f-ui); cursor: pointer; }
 .tbtn[aria-pressed="true"] { background: var(--pressed-bg); color: var(--pressed-fg); }
+.pills { flex: 1 1 auto; display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 6px; max-width: 34rem; }
+.pills .tbtn { width: 100%; padding-inline: 6px; white-space: nowrap; }
 .gen th:first-child, .gen td:first-child { position: sticky; left: 0; background: var(--surface); z-index: 1; }
 @media (max-width: 560px) {
   .wide { display: none; }
@@ -644,8 +646,10 @@ function chgkTable(st) {
     <div class="status"><span class="big">${S.mode === 'live' ? '<span class="live-dot" aria-hidden="true"></span>' : ''}${playedTours ? `После ${playedTours}-го тура` : 'Игра ещё не началась'}</span>
       ${playedTours ? '<span>предварительные</span>' : ''}${S.mode === 'live' && S.at ? `<span class="stamp">обновлено в ${hms(S.at)}</span>` : ''}</div>
     <div class="tools">
-      ${st.hasEs || ui.zachet ? `<div class="seg" role="group" aria-label="Зачёт"><button type="button" data-z="" aria-pressed="${!ui.zachet}">Общий<span class="wide">&nbsp;зачёт</span></button><button type="button" data-z="es" aria-pressed="${ui.zachet === 'es'}">Испанский<span class="wide">&nbsp;зачёт</span></button></div>` : ''}
-      <button type="button" class="tbtn" id="btn-all" aria-pressed="${ui.all}">Расплюсовка</button>
+      <div class="pills">
+        ${st.hasEs || ui.zachet ? `<button type="button" class="tbtn" data-z="" aria-pressed="${!ui.zachet}">Общий<span class="wide">&nbsp;зачёт</span></button><button type="button" class="tbtn" data-z="es" aria-pressed="${ui.zachet === 'es'}">Испанский<span class="wide">&nbsp;зачёт</span></button>` : ''}
+        <button type="button" class="tbtn" id="btn-all" aria-pressed="${ui.all}">Расплюсовка</button>
+      </div>
       ${document.fullscreenEnabled ? '<button type="button" class="tbtn wide" id="btn-full">Во весь экран</button>' : ''}
     </div>
     <div class="card scroll res-card">
