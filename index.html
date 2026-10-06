@@ -643,7 +643,7 @@ function chgkTable(st) {
     <div class="status"><span class="big">${S.mode === 'live' ? '<span class="live-dot" aria-hidden="true"></span>' : ''}${playedTours ? `После ${playedTours}-го тура` : 'Игра ещё не началась'}</span>
       ${playedTours ? '<span>предварительные</span>' : ''}${S.mode === 'live' && S.at ? `<span class="stamp">обновлено в ${hms(S.at)}</span>` : ''}</div>
     <div class="tools">
-      ${st.hasEs || ui.zachet ? `<div class="seg" role="group" aria-label="Зачёт"><button type="button" data-z="" aria-pressed="${!ui.zachet}">Общий<span class="wide"> зачёт</span></button><button type="button" data-z="es" aria-pressed="${ui.zachet === 'es'}">Испанский<span class="wide"> зачёт</span></button></div>` : ''}
+      ${st.hasEs || ui.zachet ? `<div class="seg" role="group" aria-label="Зачёт"><button type="button" data-z="" aria-pressed="${!ui.zachet}">Общий<span class="wide">&nbsp;зачёт</span></button><button type="button" data-z="es" aria-pressed="${ui.zachet === 'es'}">Испанский<span class="wide">&nbsp;зачёт</span></button></div>` : ''}
       <button type="button" class="tbtn" id="btn-all" aria-pressed="${ui.all}">Расплюсовка</button>
       ${document.fullscreenEnabled ? '<button type="button" class="tbtn wide" id="btn-full">Во весь экран</button>' : ''}
     </div>
