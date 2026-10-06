@@ -38,7 +38,6 @@
   --accent-fg: #ffffff;
   --pressed-bg: #2b2034;
   --pressed-fg: #f0ddb8;
-  --check-img: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.2 4.8 9 10 3' fill='none' stroke='%23f0ddb8' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
   --now-bg: #2b2034;
   --now-fg: #f0ddb8;
   --now-em: #f6b23a;
@@ -64,7 +63,7 @@
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
     --bg: #19131e; --surface: #241c2b; --surface-2: #2d2335; --fg: #f4e7cd; --muted: #b6a7b9;
-    --line: #3b3045; --accent: #f0914a; --accent-fg: #1c1520; --pressed-bg: #f6b23a; --pressed-fg: #2b2034; --check-img: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.2 4.8 9 10 3' fill='none' stroke='%232b2034' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+    --line: #3b3045; --accent: #f0914a; --accent-fg: #1c1520; --pressed-bg: #f6b23a; --pressed-fg: #2b2034;
     --now-bg: #dd7e31; --now-fg: #2b2034; --now-em: #2b2034; --take: #a9c95a; --miss: #5d5068;
     --warn-bg: #4a3613; --warn-fg: #f6d18c; --k-chgk: #f4e7cd; --k-ksi: #a9c95a; --k-ek: #f0914a; --k-rioja: #f08aa8;
     --focus: #f6b23a; color-scheme: dark;
@@ -72,7 +71,7 @@
 }
 :root[data-theme="dark"] {
   --bg: #19131e; --surface: #241c2b; --surface-2: #2d2335; --fg: #f4e7cd; --muted: #b6a7b9;
-  --line: #3b3045; --accent: #f0914a; --accent-fg: #1c1520; --pressed-bg: #f6b23a; --pressed-fg: #2b2034; --check-img: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'%3E%3Cpath d='M2 6.2 4.8 9 10 3' fill='none' stroke='%232b2034' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  --line: #3b3045; --accent: #f0914a; --accent-fg: #1c1520; --pressed-bg: #f6b23a; --pressed-fg: #2b2034;
   --now-bg: #dd7e31; --now-fg: #2b2034; --now-em: #2b2034; --take: #a9c95a; --miss: #5d5068;
   --warn-bg: #4a3613; --warn-fg: #f6d18c; --k-chgk: #f4e7cd; --k-ksi: #a9c95a; --k-ek: #f0914a; --k-rioja: #f08aa8;
   --focus: #f6b23a; color-scheme: dark;
@@ -265,10 +264,9 @@ tbody tr:last-child td { border-bottom: 0; }
 .live-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--take); animation: pulse 2s infinite; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--take) 60%, transparent); } 70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
 @media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
-.tools { display: flex; flex-wrap: wrap; gap: 8px; }
-.tbtn { display: inline-flex; align-items: center; gap: 8px; border: 0; background: var(--surface-2); color: var(--fg); min-height: 48px; padding: 8px 14px; border-radius: 14px; font: 600 .9rem/1 var(--f-ui); cursor: pointer; }
-.tbtn[aria-pressed]::before { content: ""; flex: none; width: 16px; height: 16px; border-radius: 4px; box-shadow: inset 0 0 0 2px var(--muted); }
-.tbtn[aria-pressed="true"]::before { background: var(--pressed-bg) center / 12px no-repeat var(--check-img); box-shadow: none; }
+.tools { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.tbtn { display: inline-flex; align-items: center; justify-content: center; border: 0; background: var(--surface-2); color: var(--fg); min-height: 48px; padding: 8px 14px; border-radius: 14px; font: 600 .9rem/1 var(--f-ui); cursor: pointer; }
+.tbtn[aria-pressed="true"] { background: var(--pressed-bg); color: var(--pressed-fg); }
 .gen th:first-child, .gen td:first-child { position: sticky; left: 0; background: var(--surface); z-index: 1; }
 @media (max-width: 560px) {
   .wide { display: none; }
@@ -284,7 +282,8 @@ tbody tr:last-child td { border-bottom: 0; }
 }
 .res abbr { text-decoration: none; font-weight: 600; }
 
-#chgk-box:fullscreen { background: var(--bg); padding: 20px; overflow: auto; }
+/* во весь экран: строки прижаты кверху, лишняя высота не раздувает статус и кнопки */
+#chgk-box:fullscreen { background: var(--bg); padding: 20px; overflow: auto; align-content: start; }
 
 /* Эрудит-квартет */
 .bracket { display: grid; gap: 10px; }
