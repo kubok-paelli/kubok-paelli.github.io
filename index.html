@@ -352,6 +352,9 @@ tbody tr:last-child td { border-bottom: 0; }
 // место и ссылки на расписание, участников, результаты и формы. Поменяли там ссылку — поменялся сайт.
 const HUB_DOC = '1LeZhBYW-NThLFOwi9iZsd1vmK8R-hM0kGJvwLzcqlmY';
 const REFRESH_SEC = 30;
+// ?test — тестовый просмотр: таблица результатов показывается как в день игры, до начала турнира
+const TEST = /[?&]test/.test(location.search);
+const hms = d => d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 const SNAP = window.SNAPSHOT;
 
 const $app = document.getElementById('app');
@@ -651,7 +654,7 @@ function chgkTable(st, isExample) {
   return `
     ${isExample ? '<p class="example">Пример на тестовых данных из таблицы организаторов — это не настоящие результаты.</p>' : ''}
     <div class="status"><span class="big">${!isExample && S.mode === 'live' ? '<span class="live-dot" aria-hidden="true"></span>' : ''}${isExample ? 'Так будет выглядеть таблица' : playedTours ? `После ${playedTours}-го тура` : 'Игра ещё не началась'}</span>
-      ${!isExample && playedTours ? '<span>предварительные</span>' : ''}${!isExample && S.at ? `<span id="stamp">обновлено в ${S.at.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</span>` : ''}</div>
+      ${!isExample && TEST ? '<span class="pending">тестовый просмотр</span>' : !isExample && playedTours ? '<span>предварительные</span>' : ''}${S.mode === 'live' && S.at ? `<span class="stamp">обновлено в ${hms(S.at)}</span>` : ''}</div>
     <div class="tools">
       ${st.hasEs || ui.zachet ? `<div class="seg" role="group" aria-label="Зачёт"><button type="button" data-z="" aria-pressed="${!ui.zachet}">Общий<span class="wide"> зачёт</span></button><button type="button" data-z="es" aria-pressed="${ui.zachet === 'es'}">Испанский<span class="wide"> зачёт</span></button></div>` : ''}
       <button type="button" class="tbtn" id="btn-all" aria-pressed="${ui.all}">Расплюсовка</button>
@@ -680,7 +683,7 @@ function renderChgk() {
   const box = document.getElementById('chgk-box'); if (!box) return;
   const scroll = box.querySelector('.scroll')?.scrollLeft || 0;
   const st = standings(ui.zachet);
-  const started = chgkStarted();
+  const started = TEST || chgkStarted();
   let html;
   if (started && (S.mode !== 'live' || !S.chgk)) html = `<div class="card empty"><p><b>Не удалось загрузить результаты.</b> Страница попробует снова сама через полминуты.</p></div>`;
   else if (started && st) html = chgkTable(st, false);
@@ -878,8 +881,9 @@ function route(fromNav = false) {
   document.getElementById('brand').textContent = c.name.replace(/\s+—\s+\d{4}$/, '');
   document.querySelectorAll('[data-nav]').forEach(a => a.dataset.nav === page ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
   const strip = document.getElementById('strip');
-  strip.hidden = S.mode !== 'snapshot';
-  if (S.mode === 'snapshot') strip.innerHTML = `<div class="wrap">Данные на ${new Date(SNAP.fetchedAt).toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}.</div>`;
+  strip.hidden = S.mode !== 'snapshot' && !TEST;
+  if (TEST) strip.innerHTML = `<div class="wrap"><b>Тестовый просмотр.</b> Результаты показаны до начала турнира — для проверки таблицы.</div>`;
+  else if (S.mode === 'snapshot') strip.innerHTML = `<div class="wrap">Данные на ${new Date(SNAP.fetchedAt).toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}.</div>`;
   $app.innerHTML = pages[page]();
   if (h === 'results') renderChgk();
   if (page === 'teams') {
@@ -895,9 +899,13 @@ function route(fromNav = false) {
   document.getElementById('foot').innerHTML = `<span>${t(c.name)} · Валенсия${c.datesText ? ' · ' + t(c.datesText) : ''}</span><a href="https://rating.chgk.info/tournament/${SNAP.rating.id}" target="_blank" rel="noopener">Турнир на rating.chgk.info</a>`;
 }
 
-let ticks = 0;
+let ticks = 0, busy = false;
 async function tick() {
-  if (document.hidden) return;
+  if (document.hidden || busy) return;
+  busy = true;
+  try { await tickBody(); } finally { busy = false; }
+}
+async function tickBody() {
   ticks++;
   if (S.mode === 'snapshot') { if (ticks % 2 === 0) { await loadBase(); if (S.mode === 'live') route(); } return; }
   const h = curPage();
@@ -905,7 +913,7 @@ async function tick() {
     const before = JSON.stringify([S.chgk, S.ksi, S.ek, S.tourTabs]);
     const prev = standings();
     await loadResults();
-    if (JSON.stringify([S.chgk, S.ksi, S.ek, S.tourTabs]) === before) { const st = document.getElementById('stamp'); if (st && S.at) st.textContent = `обновлено в ${S.at.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`; return; }
+    if (JSON.stringify([S.chgk, S.ksi, S.ek, S.tourTabs]) === before) { document.querySelectorAll('.stamp').forEach(st => { if (S.at) st.textContent = `обновлено в ${hms(S.at)}`; }); return; }
     if (prev) prevPos = new Map(prev.list.map(x => [x.name, x.pos]));
     h === 'results' ? renderChgk() : route();
   } else if (h === '' || h === 'schedule') {
@@ -925,6 +933,8 @@ async function start() {
     window.scrollTo(0, 0); route(true);
   });
   loop();
+  // вернулись на вкладку — обновляем сразу, не дожидаясь следующих 30 секунд
+  document.addEventListener('visibilitychange', () => { if (!document.hidden) tick(); });
 }
 start();
 </script>
