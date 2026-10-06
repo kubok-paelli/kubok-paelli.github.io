@@ -80,7 +80,7 @@
 [hidden] { display: none !important; }
 html { -webkit-text-size-adjust: 100%; }
 body { margin: 0; background: var(--bg); color: var(--fg); font: 400 1rem/1.5 var(--f-body);
-  padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px)); }
+  padding-bottom: calc(var(--tabbar-h) + 8px + env(safe-area-inset-bottom, 0px)); }
 a { color: inherit; }
 :focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
 h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.15; }
@@ -93,7 +93,7 @@ p { margin: 0; }
 /* Шапка */
 .top { --focus: var(--saffron); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--ink); color: var(--cream); }
 .top .wrap { display: flex; align-items: center; gap: 16px; min-height: 52px; max-width: 72rem; }
-.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 800 1.05rem/1 var(--f-display); white-space: nowrap; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 800 1.05rem/1 var(--f-display); white-space: nowrap; min-height: 48px; }
 .brand svg { width: 36px; height: 16px; flex: none; }
 .topnav { display: none; margin-left: auto; gap: 4px; }
 .topnav a { text-decoration: none; padding: 8px 12px; border-radius: 999px; font: 500 .92rem/1 var(--f-display); color: var(--cream); opacity: .82; }
@@ -108,6 +108,20 @@ p { margin: 0; }
 .tabbar svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
 .tabbar a[aria-current="page"] { opacity: 1; color: var(--saffron); }
 .tabbar a:focus-visible { outline-offset: -4px; }
+/* невысокие телефоны (iPhone SE, бюджетные Android): паэльера меньше, чтобы «Сейчас / Далее» было видно сразу */
+@media (max-width: 759px) and (max-height: 700px) { .hero h1 img { width: min(50vw, 190px); } .hero .wrap { gap: 8px; } }
+/* узкие экраны 360px: переключатель зачёта и «Расплюсовка» в одну строку */
+@media (max-width: 380px) { #chgk-box .seg button, #chgk-box .tbtn { padding-inline: 9px; font-size: .8rem; } #chgk-box .tools { gap: 6px; } }
+@media (max-width: 560px) { .results-head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); } }
+/* телефон боком: шапка не липнет, нижняя панель ниже — больше места таблице */
+@media (max-height: 500px) and (orientation: landscape) {
+  :root { --tabbar-h: 48px; }
+  .top { position: static; }
+  .tabbar a { grid-auto-flow: column; gap: 6px; font-size: .74rem; }
+  .tabbar svg { width: 20px; height: 20px; }
+  .results-head { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .day h2 { top: 0; }
+}
 @media (min-width: 900px) {
   body { padding-bottom: 0; }
   .tabbar { display: none; }
@@ -120,10 +134,10 @@ p { margin: 0; }
 
 /* Главная */
 .hero { --focus: var(--ink); background: var(--band-bg); color: var(--band-fg); }
-.hero .wrap { display: grid; gap: 14px; padding-block: 14px 26px; max-width: 72rem; }
-.hero h1 img { display: block; width: min(100%, 330px); height: auto; margin-inline: auto; }
+.hero .wrap { display: grid; gap: 12px; padding-block: 10px 20px; max-width: 72rem; }
+.hero h1 img { display: block; width: min(64vw, 260px); height: auto; margin-inline: auto; }
 .hero .eyebrow { font: 700 .76rem/1.35 var(--f-display); letter-spacing: .12em; text-transform: uppercase; }
-.hero .champ { font: 800 1.45rem/1.15 var(--f-display); text-wrap: balance; margin-top: 6px; }
+.hero .champ { font: 800 1.3rem/1.15 var(--f-display); text-wrap: balance; margin-top: 4px; }
 .hero .meta { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
 .hero .dates { display: inline-block; background: var(--band-soft); font: 800 1.3rem/1.1 var(--f-display); padding: 9px 14px 8px; border-radius: 10px; transform: rotate(-2deg); }
 .hero .countdown { font: 700 .95rem/1.3 var(--f-display); }
@@ -137,6 +151,7 @@ p { margin: 0; }
 }
 
 .main { padding-block: 20px 36px; display: grid; gap: 18px; }
+.main > *, #chgk-box > * { min-width: 0; }
 .btn { display: flex; align-items: center; justify-content: center; gap: 8px; text-align: center; text-decoration: none; border: 0; cursor: pointer;
   min-height: 50px; padding: 12px 18px; border-radius: 14px; font: 700 1rem/1.2 var(--f-display); }
 .btn-main { background: var(--accent); color: var(--accent-fg); }
@@ -151,7 +166,7 @@ p { margin: 0; }
 .now .what { font: 700 1.15rem/1.25 var(--f-display); }
 .now .when { font-size: .92rem; opacity: .85; }
 .now a { color: inherit; font-weight: 600; }
-.now a.more { justify-self: start; padding-block: 8px 2px; }
+.now a.more { justify-self: start; padding-block: 12px 4px; }
 
 .tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .tile { display: grid; gap: 4px; align-content: start; text-decoration: none; padding: 14px 16px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); min-height: 92px; }
@@ -188,7 +203,7 @@ p { margin: 0; }
 .slot.k-rioja { border-left-color: var(--k-rioja); }
 .slot.k-break h3 { font-weight: 500; color: var(--muted); }
 .slot.is-now { background: var(--lead-bg); }
-.slot .live { display: inline-block; margin-left: 6px; font: 700 .68rem/1 var(--f-display); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); vertical-align: 2px; }
+.slot .live { display: inline-block; margin-left: 6px; font: 700 .72rem/1 var(--f-display); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); vertical-align: 2px; }
 .legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .8rem; color: var(--muted); }
 .legend span { display: inline-flex; align-items: center; gap: 6px; }
 .legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
@@ -200,14 +215,14 @@ input[type="search"] { font: inherit; width: 100%; min-height: 46px; padding: 10
 .team + .team { border-top: 1px solid var(--line); }
 .team .n { font: 600 .9rem/1.3 var(--f-display); color: var(--muted); font-variant-numeric: tabular-nums; }
 .team .name { font: 700 1.05rem/1.3 var(--f-display); }
-.team .name a { text-decoration-color: var(--line); text-underline-offset: 3px; }
+.team .name a { text-decoration-color: var(--line); text-underline-offset: 3px; display: inline-block; padding-block: 10px; margin-block: -10px; }
 .team .where { grid-column: 2; font-size: .88rem; color: var(--muted); }
 .pending { display: inline-block; font: 600 .7rem/1 var(--f-display); padding: 4px 7px; border-radius: 999px; background: var(--warn-bg); color: var(--warn-fg); vertical-align: 2px; margin-left: 4px; white-space: nowrap; }
 .bat-mini { display: inline-block; width: 18px; height: 8px; color: var(--muted); vertical-align: 2px; margin-left: 5px; }
 .bat-mini svg { display: block; width: 100%; height: 100%; }
 
 /* Результаты ЧГК */
-.scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.scroll { position: relative; overflow-x: auto; -webkit-overflow-scrolling: touch; }
 table { border-collapse: separate; border-spacing: 0; width: 100%; }
 th, td { text-align: left; padding: 9px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; white-space: nowrap; }
 th { font: 600 .7rem/1.2 var(--f-display); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
@@ -217,7 +232,7 @@ tbody tr:last-child td { border-bottom: 0; }
 .res .c-pl { left: 0; width: var(--w-pl); min-width: var(--w-pl); font: 700 .95rem/1.3 var(--f-display); padding-left: 12px; }
 .res .c-team { left: var(--w-pl); width: var(--w-team); min-width: var(--w-team); max-width: var(--w-team); white-space: normal; }
 .res .c-team b { font: 600 .92rem/1.25 var(--f-display); display: block; }
-.res .c-team span { display: block; color: var(--muted); font-size: .76rem; }
+.res .c-team .city { display: block; color: var(--muted); font-size: .76rem; font-weight: 400; }
 .res .c-sum { left: calc(var(--w-pl) + var(--w-team)); width: var(--w-sum); min-width: var(--w-sum); text-align: center; background: var(--surface-2); box-shadow: inset -1px 0 0 var(--line); }
 .res td.c-sum { font: 800 1.1rem/1.3 var(--f-display); }
 .res thead th.c-sum { color: var(--fg); font-size: .9rem; }
@@ -225,7 +240,7 @@ tbody tr:last-child td { border-bottom: 0; }
 .res td.tr.future { color: var(--muted); }
 .res th.tr button { border: 0; background: transparent; color: inherit; font: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; min-height: 40px; padding: 4px 6px; border-radius: 8px; }
 .res th.q, .res td.q { padding: 9px 2px; text-align: center; min-width: 1.5rem; }
-.res th.q { font-size: .66rem; letter-spacing: 0; }
+.res th.q { font-size: .72rem; letter-spacing: 0; }
 .res .q.first { padding-left: 10px; }
 .mk { display: inline-block; width: 11px; height: 11px; border-radius: 50%; vertical-align: middle; }
 .mk.y { background: var(--take); }
@@ -238,7 +253,7 @@ tbody tr:last-child td { border-bottom: 0; }
 .move.up { color: var(--take); }
 .move.down { color: var(--accent); }
 .status { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; font-size: .88rem; color: var(--muted); }
-.status .big { font: 700 1rem/1.3 var(--f-display); color: var(--fg); }
+.status .big { display: inline-flex; align-items: center; gap: 8px; font: 700 1.05rem/1.3 var(--f-display); color: var(--fg); }
 .live-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--take); animation: pulse 2s infinite; }
 @keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--take) 60%, transparent); } 70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
 @media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
@@ -247,7 +262,19 @@ tbody tr:last-child td { border-bottom: 0; }
 .tbtn[aria-pressed="true"] { background: var(--pressed-bg); color: var(--pressed-fg); }
 .example { background: var(--warn-bg); color: var(--warn-fg); border-radius: 12px; padding: 10px 14px; font-size: .88rem; }
 .gen th:first-child, .gen td:first-child { position: sticky; left: 0; background: var(--surface); z-index: 1; }
-@media (max-width: 420px) { .res { --w-pl: 2.7rem; --w-team: 8.2rem; } .res .tr { min-width: 2.7rem; } }
+@media (max-width: 560px) {
+  .wide { display: none; }
+  .res-card { margin-inline: -16px; border-radius: 0; border-inline: 0; }
+  .res .tools { gap: 6px; }
+}
+@media (max-width: 420px) {
+  .res { --w-pl: 2.5rem; --w-team: 7.8rem; --w-sum: 2.6rem; }
+  .res .c-pl { padding-left: 10px; font-size: .9rem; }
+  .res .c-team b { font-size: .86rem; }
+  .res td.c-sum { font-size: 1rem; }
+  .res .tr { min-width: 2.75rem; }
+  .res th.tr button { padding-inline: 2px; font-size: .7rem; letter-spacing: 0; }
+}
 .res abbr { text-decoration: none; font-weight: 600; }
 @media (min-width: 760px) { .res { --w-pl: 4rem; --w-team: 14rem; --w-sum: 3.4rem; } }
 #chgk-box:fullscreen { background: var(--bg); padding: 20px; overflow: auto; }
@@ -272,11 +299,13 @@ tbody tr:last-child td { border-bottom: 0; }
 .tips { display: grid; gap: 10px; }
 .tips article { padding: 14px 16px; display: grid; gap: 6px; }
 .tips h3 { font-size: 1.02rem; font-weight: 700; }
+.tips a { display: inline-block; padding-block: 8px; margin-block: -8px; }
 .toc { display: flex; flex-wrap: wrap; gap: 6px; }
 .toc a { display: inline-flex; align-items: center; min-height: 44px; text-decoration: none; padding: 0 14px; border-radius: 999px; background: var(--surface-2); font: 600 .85rem/1 var(--f-display); }
 
 .foot { border-top: 1px solid var(--line); }
 .foot .wrap { padding-block: 18px 22px; display: grid; gap: 4px; color: var(--muted); font-size: .8rem; max-width: 72rem; }
+.foot a { justify-self: start; padding-block: 10px; }
 </style>
 <style>img { max-width: 100%; }</style>
 </head>
@@ -608,21 +637,20 @@ function chgkTable(st, isExample) {
       }
     });
     return `<tr class="${x.pos === 1 ? 'lead' : ''}"><td class="c-pl">${x.placeText}${move}</td>
-      <td class="c-team"><b>${withBat(x.name, x.local)}</b>${x.city || x.es ? `<span>${esc(x.city)}${x.es ? `${x.city ? ' · ' : ''}<abbr title="испанский зачёт">ES</abbr>` : ''}</span>` : ''}</td>
+      <td class="c-team"><b>${withBat(x.name, x.local)}</b>${x.city || x.es ? `<span class="city">${esc(x.city)}${x.es ? `${x.city ? ' · ' : ''}<abbr title="испанский зачёт">ES</abbr>` : ''}</span>` : ''}</td>
       <td class="c-sum">${x.total}</td>${cells}${st.hasShoot ? `<td class="tr">${esc(x.shoot)}</td>` : ''}</tr>`;
   }).join('');
   const playedTours = st.played.filter(Boolean).length;
   return `
     ${isExample ? '<p class="example">Пример на тестовых данных из таблицы организаторов — это не настоящие результаты.</p>' : ''}
-    <div class="status">${!isExample && S.mode === 'live' ? '<span class="live-dot" aria-hidden="true"></span>' : ''}
-      <span class="big">${isExample ? 'Так будет выглядеть таблица' : playedTours ? `Предварительные результаты после ${playedTours}-го тура` : 'Игра ещё не началась'}</span>
-      ${!isExample && S.at ? `<span id="stamp">обновлено в ${S.at.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</span>` : ''}</div>
+    <div class="status"><span class="big">${!isExample && S.mode === 'live' ? '<span class="live-dot" aria-hidden="true"></span>' : ''}${isExample ? 'Так будет выглядеть таблица' : playedTours ? `После ${playedTours}-го тура` : 'Игра ещё не началась'}</span>
+      ${!isExample && playedTours ? '<span>предварительные</span>' : ''}${!isExample && S.at ? `<span id="stamp">обновлено в ${S.at.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</span>` : ''}</div>
     <div class="tools">
-      ${st.hasEs || ui.zachet ? `<div class="seg" role="group" aria-label="Зачёт"><button type="button" data-z="" aria-pressed="${!ui.zachet}">Общий зачёт</button><button type="button" data-z="es" aria-pressed="${ui.zachet === 'es'}">Испанский зачёт</button></div>` : ''}
+      ${st.hasEs || ui.zachet ? `<div class="seg" role="group" aria-label="Зачёт"><button type="button" data-z="" aria-pressed="${!ui.zachet}">Общий<span class="wide"> зачёт</span></button><button type="button" data-z="es" aria-pressed="${ui.zachet === 'es'}">Испанский<span class="wide"> зачёт</span></button></div>` : ''}
       <button type="button" class="tbtn" id="btn-all" aria-pressed="${ui.all}">Расплюсовка</button>
-      ${document.fullscreenEnabled ? '<button type="button" class="tbtn" id="btn-full">Во весь экран</button>' : ''}
+      ${document.fullscreenEnabled ? '<button type="button" class="tbtn wide" id="btn-full">Во весь экран</button>' : ''}
     </div>
-    <div class="card scroll">
+    <div class="card scroll res-card">
       <table class="res">
         <thead><tr><th class="c-pl" title="Место">М</th><th class="c-team">Команда</th><th class="c-sum" title="Всего">Σ</th>${head}${shootHead}</tr></thead>
         <tbody>${body}</tbody>
@@ -793,7 +821,7 @@ const pages = {
     }
     return `
     <div class="wrap main">
-      <div class="page-head"><h1>Результаты</h1></div>
+      <div class="page-head results-head"><h1>Результаты</h1></div>
       <nav class="seg" aria-label="Дисциплины">${tabs.map(([k, l]) => `<a href="#${k}" ${k === sub ? 'aria-current="page"' : ''}>${l}</a>`).join('')}</nav>
       ${body}
     </div>`;
