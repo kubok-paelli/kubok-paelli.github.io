@@ -267,7 +267,6 @@ tbody tr:last-child td { border-bottom: 0; }
 .tools { display: flex; flex-wrap: wrap; gap: 8px; }
 .tbtn { border: 0; background: var(--surface-2); color: var(--fg); min-height: 42px; padding: 8px 14px; border-radius: 12px; font: 600 .88rem/1 var(--f-ui); cursor: pointer; }
 .tbtn[aria-pressed="true"] { background: var(--pressed-bg); color: var(--pressed-fg); }
-.example { background: var(--warn-bg); color: var(--warn-fg); border-radius: 12px; padding: 10px 14px; font-size: .88rem; }
 .gen th:first-child, .gen td:first-child { position: sticky; left: 0; background: var(--surface); z-index: 1; }
 @media (max-width: 560px) {
   .wide { display: none; }
@@ -352,8 +351,6 @@ tbody tr:last-child td { border-bottom: 0; }
 // место и ссылки на расписание, участников, результаты и формы. Поменяли там ссылку — поменялся сайт.
 const HUB_DOC = '1LeZhBYW-NThLFOwi9iZsd1vmK8R-hM0kGJvwLzcqlmY';
 const REFRESH_SEC = 30;
-// ?test — тестовый просмотр: таблица результатов показывается как в день игры, до начала турнира
-const TEST = /[?&]test/.test(location.search);
 const hms = d => d.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
 const SNAP = window.SNAPSHOT;
 
@@ -567,15 +564,6 @@ function daysUntil(dateISO) {
 }
 const firstSlot = kind => timeline().find(x => kind === 'chgk' ? /тур\s*ЧГК|ЧГК.*тур/i.test(x.title) : x.kind === kind);
 const slotWhen = x => x ? `${x.day.weekday}, ${fmt(x.from)}` : '';
-// результаты ЧГК публикуются с начала первого тура; до этого в таблице тестовые цифры
-function chgkStarted() {
-  const f = firstSlot('chgk'), n = madridNow();
-  if (f) return key(n.date, n.min) >= key(f.day.date, f.from);
-  const d = S.cfg.dates.match(new RegExp(`(\\d{1,2})(?:\\s*[–—-]\\s*\\d{1,2})?\\s+(${MONTHS.join('|')})\\s+(\\d{4})`, 'i'));
-  if (!d) return false; // не знаем, когда старт, — тестовые цифры не показываем
-  const day = `${d[3]}-${String(MONTHS.indexOf(d[2].toLowerCase()) + 1).padStart(2, '0')}-${d[1].padStart(2, '0')}`;
-  return key(n.date, n.min) >= key(day, 12 * 60);
-}
 
 /* ---------- Результаты ЧГК: таблица организаторов ---------- */
 // «Общий зачёт»: Место | Название команды | Город | ES | Всего | Тур 1…N | Перестрелка
@@ -625,10 +613,10 @@ function tourMarks(k) {
   return { qs: qs.map(x => x.q), by };
 }
 
-const ui = { open: new Set(), all: false, example: false, zachet: '' };
+const ui = { open: new Set(), all: false, zachet: '' };
 let prevPos = null;
 
-function chgkTable(st, isExample) {
+function chgkTable(st) {
   const isOpen = k => ui.all || ui.open.has(k);
   const marks = st.tours.map((_, k) => isOpen(k) ? tourMarks(k) : null);
   let head = '';
@@ -639,7 +627,7 @@ function chgkTable(st, isExample) {
   const shootHead = st.hasShoot ? `<th class="tr">Перестр.</th>` : '';
   const body = st.list.map(x => {
     let move = '';
-    if (!isExample && !ui.zachet && prevPos?.has(x.name)) {
+    if (!ui.zachet && prevPos?.has(x.name)) {
       const d = prevPos.get(x.name) - x.pos;
       if (d) move = `<span class="move ${d > 0 ? 'up' : 'down'}">${d > 0 ? '▲' : '▼'}${Math.abs(d)}</span>`;
     }
@@ -658,9 +646,8 @@ function chgkTable(st, isExample) {
   }).join('');
   const playedTours = st.played.filter(Boolean).length;
   return `
-    ${isExample ? '<p class="example">Пример на тестовых данных из таблицы организаторов — это не настоящие результаты.</p>' : ''}
-    <div class="status"><span class="big">${!isExample && S.mode === 'live' ? '<span class="live-dot" aria-hidden="true"></span>' : ''}${isExample ? 'Так будет выглядеть таблица' : playedTours ? `После ${playedTours}-го тура` : 'Игра ещё не началась'}</span>
-      ${!isExample && TEST ? '<span class="pending">тестовый просмотр</span>' : !isExample && playedTours ? '<span>предварительные</span>' : ''}${S.mode === 'live' && S.at ? `<span class="stamp">обновлено в ${hms(S.at)}</span>` : ''}</div>
+    <div class="status"><span class="big">${S.mode === 'live' ? '<span class="live-dot" aria-hidden="true"></span>' : ''}${playedTours ? `После ${playedTours}-го тура` : 'Игра ещё не началась'}</span>
+      ${playedTours ? '<span>предварительные</span>' : ''}${S.mode === 'live' && S.at ? `<span class="stamp">обновлено в ${hms(S.at)}</span>` : ''}</div>
     <div class="tools">
       ${st.hasEs || ui.zachet ? `<div class="seg" role="group" aria-label="Зачёт"><button type="button" data-z="" aria-pressed="${!ui.zachet}">Общий<span class="wide"> зачёт</span></button><button type="button" data-z="es" aria-pressed="${ui.zachet === 'es'}">Испанский<span class="wide"> зачёт</span></button></div>` : ''}
       <button type="button" class="tbtn" id="btn-all" aria-pressed="${ui.all}">Расплюсовка</button>
@@ -689,18 +676,11 @@ function renderChgk() {
   const box = document.getElementById('chgk-box'); if (!box) return;
   const scroll = box.querySelector('.scroll')?.scrollLeft || 0;
   const st = standings(ui.zachet);
-  const started = TEST || chgkStarted();
+  // показываем то, что сейчас в таблице организаторов; старую копию данных — никогда
   let html;
-  if (started && (S.mode !== 'live' || !S.chgk)) html = `<div class="card empty"><p><b>Не удалось загрузить результаты.</b> Страница попробует снова сама через полминуты.</p></div>`;
-  else if (started && st) html = chgkTable(st, false);
-  else if (started && S.chgk) html = genericTable(S.chgk);
-  else {
-    const f = firstSlot('chgk');
-    const canExample = st && st.list.some(x => x.total);
-    html = `<div class="card empty"><p><b>Результаты появятся во время игры.</b>${f ? ` Первый тур — ${esc(slotWhen(f))}.` : ''} Таблица будет обновляться сама каждые 30 секунд.</p>
-      ${canExample ? `<button type="button" class="tbtn" id="btn-example" aria-pressed="${ui.example}">${ui.example ? 'Скрыть пример' : 'Показать, как это будет выглядеть'}</button>` : ''}</div>`;
-    if (ui.example && canExample) html += chgkTable(st, true);
-  }
+  if (S.mode !== 'live' || !S.chgk) html = `<div class="card empty"><p><b>Не удалось загрузить результаты.</b> Страница попробует снова сама через полминуты.</p></div>`;
+  else if (st) html = chgkTable(st);
+  else html = genericTable(S.chgk);
   box.innerHTML = html;
   box.querySelectorAll('[data-tour]').forEach(b => b.onclick = async () => {
     const k = +b.dataset.tour;
@@ -715,7 +695,6 @@ function renderChgk() {
     if (ui.all && S.mode === 'live') { await loadResults(); renderChgk(); }
   };
   const full = box.querySelector('#btn-full'); if (full) full.onclick = () => document.fullscreenElement ? document.exitFullscreen().catch(() => {}) : box.requestFullscreen().catch(() => {});
-  const ex = box.querySelector('#btn-example'); if (ex) ex.onclick = () => { ui.example = !ui.example; renderChgk(); };
   const sc = box.querySelector('.scroll'); if (sc) sc.scrollLeft = scroll;
 }
 
@@ -887,9 +866,8 @@ function route(fromNav = false) {
   document.getElementById('brand').textContent = c.name.replace(/\s+—\s+\d{4}$/, '');
   document.querySelectorAll('[data-nav]').forEach(a => a.dataset.nav === page ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
   const strip = document.getElementById('strip');
-  strip.hidden = S.mode !== 'snapshot' && !TEST;
-  if (TEST) strip.innerHTML = `<div class="wrap"><b>Тестовый просмотр.</b> Результаты показаны до начала турнира — для проверки таблицы.</div>`;
-  else if (S.mode === 'snapshot') strip.innerHTML = `<div class="wrap">Данные на ${new Date(SNAP.fetchedAt).toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}.</div>`;
+  strip.hidden = S.mode !== 'snapshot';
+  if (S.mode === 'snapshot') strip.innerHTML = `<div class="wrap">Данные на ${new Date(SNAP.fetchedAt).toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}.</div>`;
   $app.innerHTML = pages[page]();
   if (h === 'results') renderChgk();
   if (page === 'teams') {
