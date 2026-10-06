@@ -1,0 +1,898 @@
+<!doctype html>
+<html lang="ru">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%232b2034'/%3E%3Cpath fill='%23f6b23a' transform='translate(0 18)' d='M32 25 L29.5 22 Q28 19.5 26 20 Q23.5 16.5 20 18 Q17 14.5 14 16 Q11 13.5 8 16.5 Q6.5 11 2 7.5 Q12 5 20.5 11 Q23.5 9.5 26.5 10.5 L27.5 4.5 L30 9 L34 9 L36.5 4.5 L37.5 10.5 Q40.5 9.5 43.5 11 Q52 5 62 7.5 Q57.5 11 56 16.5 Q53 13.5 50 16 Q47 14.5 44 18 Q40.5 16.5 38 20 Q36 19.5 34.5 22 Z'/%3E%3C/svg%3E">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://kubok-paelli.github.io/">
+<meta property="og:title" content="Кубок Паэльи — 2026">
+<meta property="og:description" content="Кубок Паэльи — 2026. Международный фестиваль интеллектуальных игр и чемпионат Испании по «Что? Где? Когда?», Валенсия, 10–11 октября 2026">
+<meta property="og:image" content="https://kubok-paelli.github.io/og.jpg">
+<meta name="twitter:card" content="summary_large_image">
+<title>Кубок Паэльи</title>
+<meta name="description" content="Кубок Паэльи — 2026. Международный фестиваль интеллектуальных игр и чемпионат Испании по «Что? Где? Когда?», Валенсия, 10–11 октября 2026">
+<meta name="theme-color" content="#2b2034">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Rubik:wght@500;600;700;800;900&family=Golos+Text:wght@400;500;600&display=swap">
+<style>
+/* Layout: mobile-first. Тёмная шапка, оранжевая полоса с паэльерой на главной, одна колонка до 46rem,
+   нижняя панель вкладок под большой палец; от 900px панель уходит в шапку */
+:root {
+  --paprika: #dd7e31;      /* фон афиши */
+  --saffron: #f6b23a;      /* рис */
+  --ink: #2b2034;          /* буквы афиши */
+  --cream: #f0ddb8;        /* уголок с датами */
+  --band-bg: #dd7e31;
+  --band-fg: #2b2034;
+  --band-soft: #f0ddb8;
+
+  --bg: #fdf7ec;
+  --surface: #ffffff;
+  --surface-2: #f8eedb;
+  --fg: #2b2034;
+  --muted: #6e6074;
+  --line: #ead9bb;
+  --accent: #b4561a;
+  --accent-fg: #ffffff;
+  --pressed-bg: #2b2034;
+  --pressed-fg: #f0ddb8;
+  --now-bg: #2b2034;
+  --now-fg: #f0ddb8;
+  --now-em: #f6b23a;
+  --take: #6f8f22;
+  --miss: #c9b9a6;
+  --lead-bg: color-mix(in srgb, var(--saffron) 16%, var(--surface));
+  --lead-sum: color-mix(in srgb, var(--saffron) 36%, var(--surface));
+  --warn-bg: #fdecc6;
+  --warn-fg: #6f4400;
+  --k-chgk: #2b2034;
+  --k-ksi: #6f8f22;
+  --k-ek: #b4561a;
+  --k-rioja: #8a2442;
+  --focus: #2b2034;
+  --tabbar-h: 64px;
+
+  --f-display: "Rubik", "Arial Rounded MT Bold", "Trebuchet MS", system-ui, sans-serif;
+  --f-body: "Golos Text", "Segoe UI", system-ui, -apple-system, sans-serif;
+  --r: 14px;
+  --wrap: 46rem;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #19131e; --surface: #241c2b; --surface-2: #2d2335; --fg: #f4e7cd; --muted: #b6a7b9;
+    --line: #3b3045; --accent: #f0914a; --accent-fg: #1c1520; --pressed-bg: #f6b23a; --pressed-fg: #2b2034;
+    --now-bg: #dd7e31; --now-fg: #2b2034; --now-em: #2b2034; --take: #a9c95a; --miss: #5d5068;
+    --warn-bg: #4a3613; --warn-fg: #f6d18c; --k-chgk: #f4e7cd; --k-ksi: #a9c95a; --k-ek: #f0914a; --k-rioja: #f08aa8;
+    --focus: #f6b23a; color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #19131e; --surface: #241c2b; --surface-2: #2d2335; --fg: #f4e7cd; --muted: #b6a7b9;
+  --line: #3b3045; --accent: #f0914a; --accent-fg: #1c1520; --pressed-bg: #f6b23a; --pressed-fg: #2b2034;
+  --now-bg: #dd7e31; --now-fg: #2b2034; --now-em: #2b2034; --take: #a9c95a; --miss: #5d5068;
+  --warn-bg: #4a3613; --warn-fg: #f6d18c; --k-chgk: #f4e7cd; --k-ksi: #a9c95a; --k-ek: #f0914a; --k-rioja: #f08aa8;
+  --focus: #f6b23a; color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+[hidden] { display: none !important; }
+html { -webkit-text-size-adjust: 100%; }
+body { margin: 0; background: var(--bg); color: var(--fg); font: 400 1rem/1.5 var(--f-body);
+  padding-bottom: calc(var(--tabbar-h) + env(safe-area-inset-bottom, 0px)); }
+a { color: inherit; }
+:focus-visible { outline: 3px solid var(--focus); outline-offset: 2px; border-radius: 6px; }
+h1, h2, h3 { font-family: var(--f-display); text-wrap: balance; margin: 0; line-height: 1.15; }
+p { margin: 0; }
+.wrap { max-width: var(--wrap); margin-inline: auto; padding-inline: 16px; }
+.nowrap { white-space: nowrap; }
+.muted { color: var(--muted); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* Шапка */
+.top { --focus: var(--saffron); position: sticky; top: env(safe-area-inset-top, 0px); z-index: 20; background: var(--ink); color: var(--cream); }
+.top .wrap { display: flex; align-items: center; gap: 16px; min-height: 52px; max-width: 72rem; }
+.brand { display: flex; align-items: center; gap: 10px; text-decoration: none; font: 800 1.05rem/1 var(--f-display); white-space: nowrap; }
+.brand svg { width: 36px; height: 16px; flex: none; }
+.topnav { display: none; margin-left: auto; gap: 4px; }
+.topnav a { text-decoration: none; padding: 8px 12px; border-radius: 999px; font: 500 .92rem/1 var(--f-display); color: var(--cream); opacity: .82; }
+.topnav a:hover { opacity: 1; }
+.topnav a[aria-current="page"] { opacity: 1; background: var(--saffron); color: var(--ink); }
+
+/* Нижняя панель вкладок */
+.tabbar { --focus: var(--saffron); position: fixed; inset: auto 0 0 0; z-index: 20; background: var(--ink); color: var(--cream);
+  padding-bottom: env(safe-area-inset-bottom, 0px); display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid rgba(240, 221, 184, .12); }
+.tabbar a { display: grid; justify-items: center; align-content: center; gap: 4px; min-height: var(--tabbar-h); text-decoration: none;
+  font: 600 .7rem/1 var(--f-display); letter-spacing: .02em; opacity: .72; }
+.tabbar svg { width: 24px; height: 24px; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.tabbar a[aria-current="page"] { opacity: 1; color: var(--saffron); }
+.tabbar a:focus-visible { outline-offset: -4px; }
+@media (min-width: 900px) {
+  body { padding-bottom: 0; }
+  .tabbar { display: none; }
+  .topnav { display: flex; }
+}
+
+.strip { font-size: .8125rem; background: var(--surface-2); color: var(--muted); }
+.strip .wrap { padding-block: 8px; max-width: 72rem; }
+.strip b { font-weight: 600; }
+
+/* Главная */
+.hero { --focus: var(--ink); background: var(--band-bg); color: var(--band-fg); }
+.hero .wrap { display: grid; gap: 14px; padding-block: 14px 26px; max-width: 72rem; }
+.hero h1 img { display: block; width: min(100%, 330px); height: auto; margin-inline: auto; }
+.hero .eyebrow { font: 700 .76rem/1.35 var(--f-display); letter-spacing: .12em; text-transform: uppercase; }
+.hero .champ { font: 800 1.45rem/1.15 var(--f-display); text-wrap: balance; margin-top: 6px; }
+.hero .meta { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+.hero .dates { display: inline-block; background: var(--band-soft); font: 800 1.3rem/1.1 var(--f-display); padding: 9px 14px 8px; border-radius: 10px; transform: rotate(-2deg); }
+.hero .countdown { font: 700 .95rem/1.3 var(--f-display); }
+.hero .venue { display: grid; gap: 2px; }
+.hero .venue b { font: 700 1.05rem/1.3 var(--f-display); }
+.hero .venue a { font-weight: 500; justify-self: start; padding-block: 6px; }
+@media (min-width: 760px) {
+  .hero .wrap { grid-template-columns: minmax(0, 1fr) minmax(0, 1.05fr); align-items: center; gap: 20px 40px; padding-block: 28px 40px; }
+  .hero h1 img { width: min(100%, 500px); }
+  .hero .champ { font-size: 2.1rem; }
+}
+
+.main { padding-block: 20px 36px; display: grid; gap: 18px; }
+.btn { display: flex; align-items: center; justify-content: center; gap: 8px; text-align: center; text-decoration: none; border: 0; cursor: pointer;
+  min-height: 50px; padding: 12px 18px; border-radius: 14px; font: 700 1rem/1.2 var(--f-display); }
+.btn-main { background: var(--accent); color: var(--accent-fg); }
+.btn-soft { background: var(--surface); color: var(--fg); border: 1px solid var(--line); }
+.btns { display: grid; gap: 10px; }
+@media (min-width: 560px) { .btns.two { grid-template-columns: 1fr 1fr; } }
+
+/* Сейчас / Далее */
+.now { background: var(--now-bg); color: var(--now-fg); border-radius: var(--r); padding: 16px 18px; display: grid; gap: 12px; }
+.now .row { display: grid; gap: 2px; }
+.now .lbl { font: 700 .72rem/1.2 var(--f-display); letter-spacing: .12em; text-transform: uppercase; color: var(--now-em); }
+.now .what { font: 700 1.15rem/1.25 var(--f-display); }
+.now .when { font-size: .92rem; opacity: .85; }
+.now a { color: inherit; font-weight: 600; }
+.now a.more { justify-self: start; padding-block: 8px 2px; }
+
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.tile { display: grid; gap: 4px; align-content: start; text-decoration: none; padding: 14px 16px; border-radius: var(--r); background: var(--surface); border: 1px solid var(--line); min-height: 92px; }
+.tile h2 { font-size: 1.05rem; font-weight: 800; }
+.tile p { font-size: .86rem; color: var(--muted); }
+.tile p b { color: var(--fg); font-weight: 600; }
+
+/* Заголовки страниц */
+.page-head h1 { font-size: 1.85rem; font-weight: 900; }
+.page-head .sub { color: var(--muted); margin-top: 6px; }
+.card { background: var(--surface); border: 1px solid var(--line); border-radius: var(--r); }
+.empty { padding: 18px; color: var(--muted); display: grid; gap: 12px; }
+.empty b { color: var(--fg); }
+
+/* Сегменты (подразделы результатов) */
+.seg { display: grid; grid-auto-flow: column; grid-auto-columns: 1fr; gap: 4px; padding: 4px; border-radius: 14px; background: var(--surface-2); }
+.seg a, .seg button { display: flex; align-items: center; justify-content: center; text-align: center; text-decoration: none; border: 0; background: transparent; color: var(--fg);
+  min-height: 44px; padding: 6px 8px; border-radius: 10px; font: 600 .9rem/1.15 var(--f-display); cursor: pointer; }
+.seg [aria-current="page"], .seg [aria-pressed="true"] { background: var(--pressed-bg); color: var(--pressed-fg); }
+
+/* Программа */
+.day { display: grid; gap: 8px; }
+.day h2 { position: sticky; top: calc(52px + env(safe-area-inset-top, 0px)); z-index: 5; background: var(--bg); padding-block: 8px 4px; font-size: 1.2rem; font-weight: 800; }
+.slots { display: grid; }
+.slot { display: grid; grid-template-columns: 4.6rem minmax(0, 1fr); gap: 2px 14px; padding: 12px 16px; border-left: 4px solid transparent; }
+.slot + .slot { border-top: 1px solid var(--line); }
+.slot .t { font: 700 1rem/1.35 var(--f-display); font-variant-numeric: tabular-nums; }
+.slot .t span { display: block; font-weight: 500; font-size: .82rem; color: var(--muted); }
+.slot h3 { font-size: 1.02rem; font-weight: 700; line-height: 1.3; }
+.slot p { color: var(--muted); font-size: .9rem; margin-top: 2px; }
+.slot.k-chgk { border-left-color: var(--k-chgk); }
+.slot.k-ksi { border-left-color: var(--k-ksi); }
+.slot.k-ek { border-left-color: var(--k-ek); }
+.slot.k-rioja { border-left-color: var(--k-rioja); }
+.slot.k-break h3 { font-weight: 500; color: var(--muted); }
+.slot.is-now { background: var(--lead-bg); }
+.slot .live { display: inline-block; margin-left: 6px; font: 700 .68rem/1 var(--f-display); letter-spacing: .08em; text-transform: uppercase; color: var(--accent); vertical-align: 2px; }
+.legend { display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: .8rem; color: var(--muted); }
+.legend span { display: inline-flex; align-items: center; gap: 6px; }
+.legend i { width: 12px; height: 12px; border-radius: 3px; display: inline-block; }
+
+/* Команды */
+input[type="search"] { font: inherit; width: 100%; min-height: 46px; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); }
+.teams { display: grid; }
+.team { display: grid; grid-template-columns: 2.2rem minmax(0, 1fr); gap: 2px 10px; padding: 12px 16px; align-items: baseline; }
+.team + .team { border-top: 1px solid var(--line); }
+.team .n { font: 600 .9rem/1.3 var(--f-display); color: var(--muted); font-variant-numeric: tabular-nums; }
+.team .name { font: 700 1.05rem/1.3 var(--f-display); }
+.team .name a { text-decoration-color: var(--line); text-underline-offset: 3px; }
+.team .where { grid-column: 2; font-size: .88rem; color: var(--muted); }
+.pending { display: inline-block; font: 600 .7rem/1 var(--f-display); padding: 4px 7px; border-radius: 999px; background: var(--warn-bg); color: var(--warn-fg); vertical-align: 2px; margin-left: 4px; white-space: nowrap; }
+.bat-mini { display: inline-block; width: 18px; height: 8px; color: var(--muted); vertical-align: 2px; margin-left: 5px; }
+.bat-mini svg { display: block; width: 100%; height: 100%; }
+
+/* Результаты ЧГК */
+.scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+table { border-collapse: separate; border-spacing: 0; width: 100%; }
+th, td { text-align: left; padding: 9px 8px; border-bottom: 1px solid var(--line); vertical-align: middle; white-space: nowrap; }
+th { font: 600 .7rem/1.2 var(--f-display); letter-spacing: .06em; text-transform: uppercase; color: var(--muted); }
+tbody tr:last-child td { border-bottom: 0; }
+.res { --w-pl: 3.1rem; --w-team: 8.6rem; --w-sum: 2.8rem; font-variant-numeric: tabular-nums; }
+.res .c-pl, .res .c-team, .res .c-sum { position: sticky; z-index: 1; background: var(--surface); }
+.res .c-pl { left: 0; width: var(--w-pl); min-width: var(--w-pl); font: 700 .95rem/1.3 var(--f-display); padding-left: 12px; }
+.res .c-team { left: var(--w-pl); width: var(--w-team); min-width: var(--w-team); max-width: var(--w-team); white-space: normal; }
+.res .c-team b { font: 600 .92rem/1.25 var(--f-display); display: block; }
+.res .c-team span { display: block; color: var(--muted); font-size: .76rem; }
+.res .c-sum { left: calc(var(--w-pl) + var(--w-team)); width: var(--w-sum); min-width: var(--w-sum); text-align: center; background: var(--surface-2); box-shadow: inset -1px 0 0 var(--line); }
+.res td.c-sum { font: 800 1.1rem/1.3 var(--f-display); }
+.res thead th.c-sum { color: var(--fg); font-size: .9rem; }
+.res .tr { text-align: center; font: 500 .95rem/1.3 var(--f-display); min-width: 3.4rem; }
+.res td.tr.future { color: var(--muted); }
+.res th.tr button { border: 0; background: transparent; color: inherit; font: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; min-height: 40px; padding: 4px 6px; border-radius: 8px; }
+.res th.q, .res td.q { padding: 9px 2px; text-align: center; min-width: 1.5rem; }
+.res th.q { font-size: .66rem; letter-spacing: 0; }
+.res .q.first { padding-left: 10px; }
+.mk { display: inline-block; width: 11px; height: 11px; border-radius: 50%; vertical-align: middle; }
+.mk.y { background: var(--take); }
+.mk.n { background: var(--miss); width: 7px; height: 7px; }
+.mk.x { box-shadow: inset 0 0 0 1.5px var(--miss); width: 7px; height: 7px; }
+.res tfoot td { color: var(--muted); font-size: .76rem; border-top: 2px solid var(--line); border-bottom: 0; }
+.res tr.lead td { background: var(--lead-bg); }
+.res tr.lead td.c-sum { background: var(--lead-sum); }
+.move { font-size: .66rem; margin-left: 3px; }
+.move.up { color: var(--take); }
+.move.down { color: var(--accent); }
+.status { display: flex; flex-wrap: wrap; gap: 4px 12px; align-items: center; font-size: .88rem; color: var(--muted); }
+.status .big { font: 700 1rem/1.3 var(--f-display); color: var(--fg); }
+.live-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--take); animation: pulse 2s infinite; }
+@keyframes pulse { 0% { box-shadow: 0 0 0 0 color-mix(in srgb, var(--take) 60%, transparent); } 70% { box-shadow: 0 0 0 8px transparent; } 100% { box-shadow: 0 0 0 0 transparent; } }
+@media (prefers-reduced-motion: reduce) { .live-dot { animation: none; } }
+.tools { display: flex; flex-wrap: wrap; gap: 8px; }
+.tbtn { border: 0; background: var(--surface-2); color: var(--fg); min-height: 42px; padding: 8px 14px; border-radius: 12px; font: 600 .88rem/1 var(--f-display); cursor: pointer; }
+.tbtn[aria-pressed="true"] { background: var(--pressed-bg); color: var(--pressed-fg); }
+.example { background: var(--warn-bg); color: var(--warn-fg); border-radius: 12px; padding: 10px 14px; font-size: .88rem; }
+.gen th:first-child, .gen td:first-child { position: sticky; left: 0; background: var(--surface); z-index: 1; }
+@media (max-width: 420px) { .res { --w-pl: 2.7rem; --w-team: 8.2rem; } .res .tr { min-width: 2.7rem; } }
+.res abbr { text-decoration: none; font-weight: 600; }
+@media (min-width: 760px) { .res { --w-pl: 4rem; --w-team: 14rem; --w-sum: 3.4rem; } }
+#chgk-box:fullscreen { background: var(--bg); padding: 20px; overflow: auto; }
+
+/* Эрудит-квартет */
+.bracket { display: grid; gap: 10px; }
+.stage { display: grid; gap: 6px; }
+.stage h3 { font-size: .8rem; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; color: var(--muted); }
+.match { display: flex; justify-content: space-between; gap: 12px; padding: 12px 16px; }
+.match + .match { border-top: 1px solid var(--line); }
+.match b { font: 700 1rem/1.3 var(--f-display); }
+
+/* Инфо */
+.info { display: grid; gap: 22px; }
+.info section { display: grid; gap: 10px; scroll-margin-top: 64px; }
+.info h2 { font-size: 1.3rem; font-weight: 800; }
+.info p { max-width: 62ch; }
+.crew { display: grid; gap: 2px; padding: 14px 16px; margin: 0; }
+.crew dt { font: 600 .74rem/1.4 var(--f-display); letter-spacing: .07em; text-transform: uppercase; color: var(--muted); }
+.crew dd { margin: 0 0 10px; }
+.crew dd:last-child { margin-bottom: 0; }
+.tips { display: grid; gap: 10px; }
+.tips article { padding: 14px 16px; display: grid; gap: 6px; }
+.tips h3 { font-size: 1.02rem; font-weight: 700; }
+.toc { display: flex; flex-wrap: wrap; gap: 6px; }
+.toc a { display: inline-flex; align-items: center; min-height: 44px; text-decoration: none; padding: 0 14px; border-radius: 999px; background: var(--surface-2); font: 600 .85rem/1 var(--f-display); }
+
+.foot { border-top: 1px solid var(--line); }
+.foot .wrap { padding-block: 18px 22px; display: grid; gap: 4px; color: var(--muted); font-size: .8rem; max-width: 72rem; }
+</style>
+<style>img { max-width: 100%; }</style>
+</head>
+<body>
+
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="bat" viewBox="0 2 64 24">
+    <path fill="currentColor" d="M32 25 L29.5 22 Q28 19.5 26 20 Q23.5 16.5 20 18 Q17 14.5 14 16 Q11 13.5 8 16.5 Q6.5 11 2 7.5 Q12 5 20.5 11 Q23.5 9.5 26.5 10.5 L27.5 4.5 L30 9 L34 9 L36.5 4.5 L37.5 10.5 Q40.5 9.5 43.5 11 Q52 5 62 7.5 Q57.5 11 56 16.5 Q53 13.5 50 16 Q47 14.5 44 18 Q40.5 16.5 38 20 Q36 19.5 34.5 22 Z"/>
+  </symbol>
+</svg>
+
+<header class="top">
+  <div class="wrap">
+    <a class="brand" href="#"><svg aria-hidden="true"><use href="#bat"/></svg><span id="brand">Кубок Паэльи</span></a>
+    <nav class="topnav" aria-label="Разделы">
+      <a href="#" data-nav="home">Главная</a>
+      <a href="#schedule" data-nav="schedule">Программа</a>
+      <a href="#teams" data-nav="teams">Команды</a>
+      <a href="#results" data-nav="results">Результаты</a>
+      <a href="#info" data-nav="info">Инфо</a>
+    </nav>
+  </div>
+</header>
+<div class="strip" id="strip" hidden></div>
+<main id="app"></main>
+<footer class="foot"><div class="wrap" id="foot"></div></footer>
+<nav class="tabbar" aria-label="Разделы">
+  <a href="#" data-nav="home"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 10.5 12 3l9 7.5V20a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/></svg>Главная</a>
+  <a href="#schedule" data-nav="schedule"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>Программа</a>
+  <a href="#teams" data-nav="teams"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="9" cy="8" r="3.2"/><path d="M3.5 19c.6-3.2 2.8-5 5.5-5s4.9 1.8 5.5 5"/><circle cx="17" cy="9" r="2.6"/><path d="M16 14.2c2.4-.2 4.1 1.4 4.6 4.3"/></svg>Команды</a>
+  <a href="#results" data-nav="results"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M5 20V11M12 20V5M19 20v-6M3 20h18"/></svg>Результаты</a>
+  <a href="#info" data-nav="info"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M12 11v6M12 7.5v.5"/></svg>Инфо</a>
+</nav>
+
+<script src="data-snapshot.js"></script>
+<script>
+// Сайт читает документы организаторов сам. Главный — «Мини-сайт Кубка Паэльи»: в нём заголовок, даты,
+// место и ссылки на расписание, участников, результаты и формы. Поменяли там ссылку — поменялся сайт.
+const HUB_DOC = '1LeZhBYW-NThLFOwi9iZsd1vmK8R-hM0kGJvwLzcqlmY';
+const REFRESH_SEC = 30;
+const SNAP = window.SNAPSHOT;
+
+const $app = document.getElementById('app');
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const norm = s => String(s ?? '').trim().toLowerCase().replace(/ё/g, 'е').replace(/[*]+$/, '').replace(/\s+/g, ' ').trim();
+const nb = s => String(s ?? '').replace(/(^|[\s(«])([а-яёa-z]{1,2}|\d+)\s/gi, '$1$2 ').replace(/\s([—€])/g, ' $1');
+const t = s => esc(nb(s));
+const cap = s => s ? s[0].toUpperCase() + s.slice(1) : s;
+const quotes = s => String(s ?? '').replace(/"([^"]*)"/g, '«$1»');
+const listJoin = a => a.length > 1 ? `${a.slice(0, -1).join(', ')} и ${a.at(-1)}` : (a[0] || '');
+// значок мыши не отрывается от последнего слова названия
+function withBat(name, local) {
+  name = esc(name); if (!local) return name;
+  const bat = `<span class="bat-mini" role="img" aria-label="из Валенсии">${batSvg()}</span>`, i = name.lastIndexOf(' ');
+  return i < 0 ? `<span class="nowrap">${name}${bat}</span>` : `${name.slice(0, i + 1)}<span class="nowrap">${name.slice(i + 1)}${bat}</span>`;
+}
+const batSvg = () => `<svg viewBox="0 2 64 24" aria-hidden="true"><use href="#bat"/></svg>`;
+function plural(n, one, few, many) {
+  n = Math.abs(n) % 100; const d = n % 10;
+  if (n > 10 && n < 20) return many; if (d > 1 && d < 5) return few; if (d === 1) return one; return many;
+}
+const MONTHS = ['января', 'февраля', 'марта', 'апреля', 'мая', 'июня', 'июля', 'августа', 'сентября', 'октября', 'ноября', 'декабря'];
+const ROUTES = { '': 'home', schedule: 'schedule', teams: 'teams', results: 'results', ksi: 'results', ek: 'results', info: 'info' };
+const curPage = () => { const h = (location.hash || '').slice(1); return h in ROUTES ? h : ''; };
+
+/* ---------- Чтение Google-документов ---------- */
+function parseCSV(text) {
+  const rows = []; let row = [], cell = '', q = false;
+  for (let i = 0; i < text.length; i++) {
+    const c = text[i];
+    if (q) { if (c === '"') { if (text[i + 1] === '"') { cell += '"'; i++; } else q = false; } else cell += c; }
+    else if (c === '"') q = true;
+    else if (c === ',') { row.push(cell); cell = ''; }
+    else if (c === '\n' || c === '\r') { if (c === '\r' && text[i + 1] === '\n') i++; row.push(cell); rows.push(row); row = []; cell = ''; }
+    else cell += c;
+  }
+  if (cell !== '' || row.length) { row.push(cell); rows.push(row); }
+  return rows;
+}
+async function fetchText(url) {
+  const r = await fetch(url, { cache: 'no-store' });
+  if (!r.ok) throw new Error('нет доступа');
+  const txt = await r.text();
+  if (/^\s*</.test(txt)) throw new Error('нет доступа'); // страница входа Google вместо данных
+  return txt.replace(/^﻿/, '');
+}
+const docUrl = id => `https://docs.google.com/document/d/${id}/export?format=txt`;
+const sheetId = link => link?.match(/spreadsheets\/d\/([\w-]+)/)?.[1];
+function sheetUrl(link, tab) {
+  const id = sheetId(link); if (!id) return null;
+  const gid = link.match(/[#&?]gid=(\d+)/)?.[1];
+  const which = tab ? `&sheet=${encodeURIComponent(tab)}` : gid ? `&gid=${gid}` : '';
+  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv${which}&t=${Date.now()}`;
+}
+const docId = link => link?.match(/document\/d\/([\w-]+)/)?.[1];
+const getRows = async (link, tab) => { const u = link && sheetUrl(link, tab); if (!u) return null; try { return parseCSV(await fetchText(u)); } catch { return null; } };
+
+/* ---------- Разбор «Мини-сайта» ---------- */
+function parseHub(txt) {
+  const lines = txt.split(/\r?\n/).map(s => s.replace(/ /g, ' ').trim());
+  const cfg = { title: [], dates: '', venue: '', map: '', links: {}, notReady: new Set() };
+  let block = '';
+  for (const line of lines) {
+    if (!line) continue;
+    const head = line.match(/^(заголовок|информация|разделы)\s*:?\s*(.*)$/i);
+    if (head) { block = head[1].toLowerCase(); if (head[2]) cfg.title.push(head[2]); continue; }
+    const url = line.match(/https?:\/\/\S+/)?.[0];
+    const label = (url ? line.slice(0, line.indexOf(url)) : line).replace(/\(пока не готово\)/i, '').replace(/[\s\-–—:]+$/, '').trim();
+    if (/^даты[^:]*:/i.test(line)) { cfg.dates = line.replace(/^даты[^:]*:\s*/i, ''); continue; }
+    if (/^место[^:]*:/i.test(label)) { cfg.venue = label.replace(/^место[^:]*:\s*/i, ''); cfg.map = url || ''; continue; }
+    if (block === 'заголовок' && !url) { cfg.title.push(label); continue; }
+    let key = null;
+    if (url && /forms\.gle|\/forms\//.test(url)) key = /апелляц/i.test(label) ? 'formAppeal' : /состав/i.test(label) ? 'formSquads' : 'formReg';
+    else if (/^результат/i.test(label)) key = /кси|своя/i.test(label) ? 'ksi' : /эрудит/i.test(label) ? 'ek' : 'chgk';
+    else if (/правил|регламент|положени/i.test(label)) key = 'rules';
+    else if (/расписан|программ/i.test(label)) key = 'schedule';
+    else if (/участник|команд/i.test(label)) key = 'teams';
+    if (!key) continue;
+    if (url) { if (!cfg.links[key]) cfg.links[key] = url; } else if (/не готово/i.test(line)) cfg.notReady.add(key);
+  }
+  // «Международный фестиваль … Кубок Паэльи - 2026.» → надзаголовок + название
+  const t1 = (cfg.title[0] || 'Кубок Паэльи').replace(/\s+/g, ' ').replace(/\.$/, '').replace(/\s-\s/g, ' — ');
+  const i = t1.indexOf('Кубок');
+  cfg.eyebrow = i > 0 ? t1.slice(0, i).trim() : '';
+  cfg.name = i >= 0 ? t1.slice(i) : t1;
+  cfg.champ = quotes((cfg.title[1] || '').replace(/\s+/g, ' ').replace(/\.$/, ''));
+  cfg.datesText = cfg.dates.replace(/(\d)\s*[-–—]\s*(\d)/, '$1–$2').replace(/\s*(года|г)\.?$/i, '');
+  cfg.year = cfg.dates.match(/\d{4}/)?.[0] || String(new Date().getFullYear());
+  return cfg;
+}
+
+/* ---------- Разбор расписания ---------- */
+const WD = /(понедельник|вторник|среда|четверг|пятница|суббота|воскресенье)/i;
+const SLOT_RE = /^(\d{1,2})[:.](\d{2})\s*(?:[–—-]\s*(\d{1,2})[:.](\d{2}))?\.?\s+(.+)$/;
+const hm = (h, m) => +h * 60 + +m;
+const fmt = min => `${Math.floor(min / 60)}:${String(min % 60).padStart(2, '0')}`;
+function kindOf(s) {
+  if (/перерыв/i.test(s)) return 'break';
+  if (/риох/i.test(s)) return 'rioja';
+  if (/эрудит/i.test(s)) return 'ek';
+  if (/своя игра|кси/i.test(s)) return 'ksi';
+  if (/чгк|перестрелк|награжд/i.test(s)) return 'chgk';
+  return 'other';
+}
+function parseSchedule(txt, year) {
+  const days = [];
+  for (const raw of txt.split(/\r?\n/)) {
+    const line = raw.replace(/ /g, ' ').trim().replace(/^[•*\-–—]\s*/, '');
+    if (!line) continue;
+    const s = line.match(SLOT_RE);
+    if (s && days.length && !WD.test(line)) {
+      const [, h1, m1, h2, m2, title] = s;
+      days.at(-1).items.push({ from: hm(h1, m1), to: h2 ? hm(h2, m2) : null, title: title.trim().replace(/\.$/, ''), notes: [], kind: kindOf(title) });
+      continue;
+    }
+    const wd = line.match(WD);
+    const dn = line.match(/(\d{1,2})\.(\d{1,2})(?:\.(\d{4}))?/);
+    const dw = line.match(new RegExp(`(\\d{1,2})\\s+(${MONTHS.join('|')})`, 'i'));
+    if (wd && (dn || dw) && line.length < 60) {
+      const dd = +(dn ? dn[1] : dw[1]), mm = dn ? +dn[2] : MONTHS.indexOf(dw[2].toLowerCase()) + 1, yyyy = dn?.[3] || year;
+      const w = wd[1].toLowerCase();
+      days.push({ label: `${cap(w)}, ${dd} ${MONTHS[mm - 1]}`, weekday: w, date: `${yyyy}-${String(mm).padStart(2, '0')}-${String(dd).padStart(2, '0')}`, items: [], notes: [] });
+      continue;
+    }
+    const day = days.at(-1); if (!day) continue;
+    const note = line.replace(/^место проведения\s*[–—-]\s*/i, 'Где: ').replace(/(\d{1,2})\.(\d{2})\b/g, '$1:$2');
+    (day.items.length ? day.items.at(-1).notes : day.notes).push(note);
+  }
+  return days;
+}
+
+/* ---------- Разбор участников ---------- */
+function parseTeams(csv) {
+  const rows = parseCSV(csv);
+  const h = rows.findIndex(r => r.some(c => /назван/i.test(c)));
+  if (h < 0) return { list: [], notes: [] };
+  const head = rows[h].map(c => norm(c));
+  const col = re => head.findIndex(c => re.test(c));
+  const ci = { name: col(/назван/), country: col(/стран/), city: col(/город/), id: col(/(^|\s)id(\s|$)|айди|рейтинг|номер на/) };
+  const body = rows.slice(h + 1).filter(r => String(r[ci.name] ?? '').trim());
+  // если первая колонка — порядковый номер, строки без номера считаем примечаниями
+  const numbered = ci.name > 0 && body.filter(r => /^\d+$/.test(String(r[0]).trim())).length > body.length / 2;
+  const list = [], notes = [];
+  for (const r of body) {
+    const name = String(r[ci.name]).trim();
+    if (name.startsWith('*') || (numbered && !String(r[0]).trim())) { notes.push(name); continue; }
+    const v = k => ci[k] >= 0 ? String(r[ci[k]] ?? '').trim() : '';
+    list.push({ name: name.replace(/\*+$/, '').trim(), country: v('country'), city: v('city'), id: v('id').replace(/\D/g, ''), pending: /\*$/.test(name) });
+  }
+  return { list, notes };
+}
+
+/* ---------- Состояние ---------- */
+const S = { mode: 'snapshot', cfg: null, days: [], teams: [], teamNotes: [], chgk: null, tourTabs: {}, ksi: null, ek: null, at: null, loadedAt: 0 };
+
+async function loadBase() {
+  let hub;
+  try { hub = await fetchText(docUrl(HUB_DOC)); S.mode = 'live'; }
+  catch { if (S.cfg) return; hub = SNAP.hub; S.mode = 'snapshot'; }
+  S.cfg = parseHub(hub);
+  const L = S.cfg.links, live = S.mode === 'live';
+  const [teamsCsv, schedTxt] = await Promise.all([
+    live && L.teams ? fetchText(sheetUrl(L.teams)).catch(() => null) : null,
+    live && docId(L.schedule) ? fetchText(docUrl(docId(L.schedule))).catch(() => null) : null,
+  ]);
+  if (teamsCsv || !S.teams.length) { const tm = parseTeams(teamsCsv || SNAP.teams); S.teams = tm.list; S.teamNotes = tm.notes; }
+  const days = schedTxt ? parseSchedule(schedTxt, S.cfg.year) : [];
+  if (days.length) S.days = days; else if (!S.days.length) S.days = parseSchedule(SNAP.schedule, S.cfg.year);
+  S.loadedAt = Date.now();
+  await loadResults();
+}
+// последние удачные данные не затираем, если Google не ответил
+async function loadResults() {
+  if (S.mode !== 'live') {
+    S.chgk = SNAP.chgk?.overall || null; S.tourTabs = SNAP.chgk?.tours || {}; return;
+  }
+  const L = S.cfg.links;
+  const open = [...ui.open].concat(ui.all ? standings()?.tours.map((_, k) => k) || [] : []);
+  const [chgk, ksi, ek, ...tabs] = await Promise.all([getRows(L.chgk, 'Общий зачёт').then(r => r ?? getRows(L.chgk)), getRows(L.ksi), getRows(L.ek),
+    ...[...new Set(open)].map(k => getRows(L.chgk, `${k + 1} тур`).then(r => [k, r]))]);
+  S.chgk = chgk ?? S.chgk; S.ksi = ksi ?? S.ksi; S.ek = ek ?? S.ek;
+  for (const [k, r] of tabs) if (r) S.tourTabs[k] = r;
+  S.at = new Date();
+}
+
+/* ---------- Время в Валенсии ---------- */
+function madridNow() {
+  const p = Object.fromEntries(new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Madrid', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', hourCycle: 'h23' })
+    .formatToParts(new Date()).map(x => [x.type, x.value]));
+  return { date: `${p.year}-${p.month}-${p.day}`, min: +p.hour * 60 + +p.minute };
+}
+function timeline() {
+  const out = [];
+  for (const d of S.days) d.items.forEach((it, i) => {
+    const next = d.items[i + 1];
+    out.push({ ...it, day: d, end: it.to ?? (next ? next.from : it.from + 60) });
+  });
+  return out;
+}
+const key = (date, min) => `${date} ${String(min).padStart(4, '0')}`;
+function nowNext() {
+  const now = madridNow(), tl = timeline(), k = key(now.date, now.min);
+  const cur = tl.find(x => key(x.day.date, x.from) <= k && k < key(x.day.date, x.end));
+  const nxt = tl.find(x => key(x.day.date, x.from) > k && x.kind !== 'break');
+  return { cur, nxt, before: tl.length && k < key(tl[0].day.date, tl[0].from), after: tl.length && k >= key(tl.at(-1).day.date, tl.at(-1).end) };
+}
+function daysUntil(dateISO) {
+  const now = madridNow();
+  return Math.round((new Date(dateISO + 'T00:00:00Z') - new Date(now.date + 'T00:00:00Z')) / 864e5);
+}
+const firstSlot = kind => timeline().find(x => kind === 'chgk' ? /тур\s*ЧГК|ЧГК.*тур/i.test(x.title) : x.kind === kind);
+const slotWhen = x => x ? `${x.day.weekday}, ${fmt(x.from)}` : '';
+// результаты ЧГК публикуются с начала первого тура; до этого в таблице тестовые цифры
+function chgkStarted() {
+  const f = firstSlot('chgk'), n = madridNow();
+  if (f) return key(n.date, n.min) >= key(f.day.date, f.from);
+  const d = S.cfg.dates.match(new RegExp(`(\\d{1,2})(?:\\s*[–—-]\\s*\\d{1,2})?\\s+(${MONTHS.join('|')})\\s+(\\d{4})`, 'i'));
+  if (!d) return false; // не знаем, когда старт, — тестовые цифры не показываем
+  const day = `${d[3]}-${String(MONTHS.indexOf(d[2].toLowerCase()) + 1).padStart(2, '0')}-${d[1].padStart(2, '0')}`;
+  return key(n.date, n.min) >= key(day, 12 * 60);
+}
+
+/* ---------- Результаты ЧГК: таблица организаторов ---------- */
+// «Общий зачёт»: Место | Название команды | Город | ES | Всего | Тур 1…N | Перестрелка
+function standings(zachet = '') {
+  const rows = S.chgk; if (!rows) return null;
+  const h = rows.findIndex(r => r.some(c => /назван|команд/i.test(c)) && r.some(c => /^(всего|сумма|итого)/i.test(String(c).trim())));
+  if (h < 0) return null;
+  const head = rows[h].map(c => String(c).trim());
+  const idx = re => head.findIndex(c => re.test(c));
+  const ci = { place: idx(/^мест/i), name: idx(/назван|команд/i), city: idx(/^город/i), es: idx(/^es$/i), total: idx(/^(всего|сумма|итого)/i), shoot: idx(/перестрел/i) };
+  const tours = head.map((c, i) => ({ n: +(c.match(/^тур\s*(\d+)/i)?.[1] || 0), i })).filter(x => x.n);
+  const meta = new Map(S.teams.map(x => [norm(x.name), x]));
+  const num = v => { const n = parseFloat(String(v ?? '').replace(',', '.')); return isNaN(n) ? null : n; };
+  let list = rows.slice(h + 1).filter(r => String(r[ci.name] ?? '').trim()).map(r => {
+    const name = String(r[ci.name]).trim().replace(/\*+$/, '').trim(), m = meta.get(norm(name));
+    return { name, city: m?.city || (ci.city >= 0 ? String(r[ci.city] ?? '').trim() : ''), local: /валенс/i.test(m?.city || ''),
+      es: ci.es >= 0 && String(r[ci.es] ?? '').trim() !== '', placeRaw: ci.place >= 0 ? num(r[ci.place]) : null,
+      total: num(r[ci.total]) ?? 0, tours: tours.map(x => num(r[x.i])), shoot: ci.shoot >= 0 ? String(r[ci.shoot] ?? '').trim() : '' };
+  });
+  if (zachet === 'es') list = list.filter(x => x.es);
+  list.sort((a, b) => (a.placeRaw ?? 1e9) - (b.placeRaw ?? 1e9) || b.total - a.total || a.name.localeCompare(b.name, 'ru'));
+  const same = (a, b) => a.placeRaw != null ? a.placeRaw === b.placeRaw : a.total === b.total;
+  for (let i = 0; i < list.length;) {
+    let j = i; while (j < list.length && same(list[j], list[i])) j++;
+    for (let k = i; k < j; k++) { list[k].pos = i + 1; list[k].placeText = j - i > 1 ? `${i + 1}–${j}` : `${i + 1}`; }
+    i = j;
+  }
+  const played = tours.map((_, k) => list.some(x => x.tours[k]));
+  return { tours: tours.map(x => x.n), list, played, hasShoot: list.some(x => x.shoot !== ''), hasEs: ci.es >= 0 && list.some(x => x.es) };
+}
+// вкладка «N тур»: № | Название команды | Итого | номера вопросов
+function tourMarks(k) {
+  const rows = S.tourTabs[k]; if (!rows) return null;
+  const h = rows.findIndex(r => r.some(c => /назван|команд/i.test(c)));
+  if (h < 0) return null;
+  const head = rows[h].map(c => String(c).trim());
+  const ni = head.findIndex(c => /назван|команд/i.test(c));
+  const qs = head.map((c, i) => ({ q: c, i })).filter(x => /^\d+(\/\d+)?$/.test(x.q) && x.i > ni + 1);
+  if (!qs.length) return null;
+  const by = new Map(rows.slice(h + 1).filter(r => String(r[ni] ?? '').trim()).map(r => [norm(r[ni]), qs.map(x => String(r[x.i] ?? '').trim() === '1' ? 1 : 0)]));
+  return { qs: qs.map(x => x.q), by };
+}
+
+const ui = { open: new Set(), all: false, example: false, zachet: '' };
+let prevPos = null;
+
+function chgkTable(st, isExample) {
+  const isOpen = k => ui.all || ui.open.has(k);
+  const marks = st.tours.map((_, k) => isOpen(k) ? tourMarks(k) : null);
+  let head = '';
+  st.tours.forEach((n, k) => {
+    head += `<th class="tr"><button type="button" data-tour="${k}" aria-expanded="${isOpen(k)}">Тур ${n} ${isOpen(k) ? '−' : '+'}</button></th>`;
+    if (isOpen(k)) head += marks[k] ? marks[k].qs.map((q, i) => `<th class="q ${i ? '' : 'first'}">${esc(q)}</th>`).join('') : `<th class="q first muted">…</th>`;
+  });
+  const shootHead = st.hasShoot ? `<th class="tr">Перестр.</th>` : '';
+  const body = st.list.map(x => {
+    let move = '';
+    if (!isExample && !ui.zachet && prevPos?.has(x.name)) {
+      const d = prevPos.get(x.name) - x.pos;
+      if (d) move = `<span class="move ${d > 0 ? 'up' : 'down'}">${d > 0 ? '▲' : '▼'}${Math.abs(d)}</span>`;
+    }
+    let cells = '';
+    st.tours.forEach((n, k) => {
+      cells += `<td class="tr ${st.played[k] ? '' : 'future'}">${st.played[k] ? (x.tours[k] ?? 0) : '·'}</td>`;
+      if (isOpen(k)) {
+        const m = marks[k]?.by.get(norm(x.name));
+        cells += marks[k] ? marks[k].qs.map((q, i) => `<td class="q ${i ? '' : 'first'}">${m ? (m[i] ? '<span class="mk y"></span><span class="sr-only">взят</span>' : '<span class="mk n"></span><span class="sr-only">не взят</span>') : ''}</td>`).join('') : `<td class="q first"></td>`;
+      }
+    });
+    return `<tr class="${x.pos === 1 ? 'lead' : ''}"><td class="c-pl">${x.placeText}${move}</td>
+      <td class="c-team"><b>${withBat(x.name, x.local)}</b>${x.city || x.es ? `<span>${esc(x.city)}${x.es ? `${x.city ? ' · ' : ''}<abbr title="испанский зачёт">ES</abbr>` : ''}</span>` : ''}</td>
+      <td class="c-sum">${x.total}</td>${cells}${st.hasShoot ? `<td class="tr">${esc(x.shoot)}</td>` : ''}</tr>`;
+  }).join('');
+  const playedTours = st.played.filter(Boolean).length;
+  return `
+    ${isExample ? '<p class="example">Пример на тестовых данных из таблицы организаторов — это не настоящие результаты.</p>' : ''}
+    <div class="status">${!isExample && S.mode === 'live' ? '<span class="live-dot" aria-hidden="true"></span>' : ''}
+      <span class="big">${isExample ? 'Так будет выглядеть таблица' : playedTours ? `Предварительные результаты после ${playedTours}-го тура` : 'Игра ещё не началась'}</span>
+      ${!isExample && S.at ? `<span id="stamp">обновлено в ${S.at.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}</span>` : ''}</div>
+    <div class="tools">
+      ${st.hasEs || ui.zachet ? `<div class="seg" role="group" aria-label="Зачёт"><button type="button" data-z="" aria-pressed="${!ui.zachet}">Общий зачёт</button><button type="button" data-z="es" aria-pressed="${ui.zachet === 'es'}">Испанский зачёт</button></div>` : ''}
+      <button type="button" class="tbtn" id="btn-all" aria-pressed="${ui.all}">Расплюсовка</button>
+      ${document.fullscreenEnabled ? '<button type="button" class="tbtn" id="btn-full">Во весь экран</button>' : ''}
+    </div>
+    <div class="card scroll">
+      <table class="res">
+        <thead><tr><th class="c-pl" title="Место">М</th><th class="c-team">Команда</th><th class="c-sum" title="Всего">Σ</th>${head}${shootHead}</tr></thead>
+        <tbody>${body}</tbody>
+      </table>
+    </div>
+    <p class="muted" style="font-size:.8rem">Листайте таблицу вбок. Нажмите на тур, чтобы увидеть, какие вопросы взяты. Одинаковое место у нескольких команд пишется так: «3–4».</p>`;
+}
+function genericTable(rows) {
+  rows = rows.filter(r => r.some(c => String(c).trim()));
+  if (!rows.length) return '';
+  const keep = rows[0].map((_, i) => rows.some(r => String(r[i] ?? '').trim()));
+  const cells = r => r.filter((_, i) => keep[i]);
+  return `<div class="card scroll"><table class="gen">
+    <thead><tr>${cells(rows[0]).map(c => `<th>${esc(c)}</th>`).join('')}</tr></thead>
+    <tbody>${rows.slice(1).map(r => `<tr>${cells(r).map(c => `<td>${esc(c)}</td>`).join('')}</tr>`).join('')}</tbody>
+  </table></div>`;
+}
+
+function renderChgk() {
+  const box = document.getElementById('chgk-box'); if (!box) return;
+  const scroll = box.querySelector('.scroll')?.scrollLeft || 0;
+  const st = standings(ui.zachet);
+  const started = chgkStarted();
+  let html;
+  if (started && (S.mode !== 'live' || !S.chgk)) html = `<div class="card empty"><p><b>Не удалось загрузить результаты.</b> Страница попробует снова сама через полминуты.</p></div>`;
+  else if (started && st) html = chgkTable(st, false);
+  else if (started && S.chgk) html = genericTable(S.chgk);
+  else {
+    const f = firstSlot('chgk');
+    const canExample = st && st.list.some(x => x.total);
+    html = `<div class="card empty"><p><b>Результаты появятся во время игры.</b>${f ? ` Первый тур — ${esc(slotWhen(f))}.` : ''} Таблица будет обновляться сама каждые 30 секунд.</p>
+      ${canExample ? `<button type="button" class="tbtn" id="btn-example" aria-pressed="${ui.example}">${ui.example ? 'Скрыть пример' : 'Показать, как это будет выглядеть'}</button>` : ''}</div>`;
+    if (ui.example && canExample) html += chgkTable(st, true);
+  }
+  box.innerHTML = html;
+  box.querySelectorAll('[data-tour]').forEach(b => b.onclick = async () => {
+    const k = +b.dataset.tour;
+    if (ui.all) { ui.all = false; ui.open = new Set(standings()?.tours.map((_, i) => i)); }
+    ui.open.has(k) ? ui.open.delete(k) : ui.open.add(k);
+    renderChgk();
+    if (ui.open.has(k) && !S.tourTabs[k] && S.mode === 'live') { const r = await getRows(S.cfg.links.chgk, `${k + 1} тур`); if (r) { S.tourTabs[k] = r; renderChgk(); } }
+  });
+  box.querySelectorAll('[data-z]').forEach(b => b.onclick = () => { ui.zachet = b.dataset.z; renderChgk(); });
+  const all = box.querySelector('#btn-all'); if (all) all.onclick = async () => {
+    ui.all = !ui.all; if (!ui.all) ui.open.clear(); renderChgk();
+    if (ui.all && S.mode === 'live') { await loadResults(); renderChgk(); }
+  };
+  const full = box.querySelector('#btn-full'); if (full) full.onclick = () => document.fullscreenElement ? document.exitFullscreen().catch(() => {}) : box.requestFullscreen().catch(() => {});
+  const ex = box.querySelector('#btn-example'); if (ex) ex.onclick = () => { ui.example = !ui.example; renderChgk(); };
+  const sc = box.querySelector('.scroll'); if (sc) sc.scrollLeft = scroll;
+}
+
+/* ---------- Страницы ---------- */
+function formButtons(which) {
+  const L = S.cfg.links, b = [];
+  if (which.includes('squads') && L.formSquads) b.push(`<a class="btn btn-main" href="${esc(L.formSquads)}" target="_blank" rel="noopener">Подать состав команды</a>`);
+  if (which.includes('reg') && L.formReg) b.push(`<a class="btn btn-soft" href="${esc(L.formReg)}" target="_blank" rel="noopener">Регистрация на КСИ, Эрудит-квартет и «Кубок Риохи»</a>`);
+  if (which.includes('appeal') && L.formAppeal) b.push(`<a class="btn btn-soft" href="${esc(L.formAppeal)}" target="_blank" rel="noopener">Подать апелляцию</a>`);
+  return b.length ? `<div class="btns ${b.length === 2 ? 'two' : ''}">${b.join('')}</div>` : '';
+}
+function nowCard() {
+  const { cur, nxt, before, after } = nowNext();
+  if (!S.days.length) return '';
+  if (after) return `<div class="now"><div class="row"><span class="lbl">Фестиваль завершён</span><span class="what">Спасибо, что были с нами!</span></div><a class="more" href="#results">Результаты →</a></div>`;
+  if (before) {
+    const f = timeline()[0], n = daysUntil(f.day.date);
+    return `<div class="now"><div class="row"><span class="lbl">${n > 1 ? `До старта ${n} ${plural(n, 'день', 'дня', 'дней')}` : n === 1 ? 'Старт завтра' : 'Старт сегодня'}</span>
+      <span class="what">${t(f.title)}</span><span class="when">${t(f.day.label)}, ${fmt(f.from)}</span></div>
+      <a class="more" href="#schedule">Вся программа →</a></div>`;
+  }
+  return `<div class="now">
+    ${cur ? `<div class="row"><span class="lbl">Сейчас</span><span class="what">${t(cur.title)}</span><span class="when">до ${fmt(cur.end)}${cur.notes.length ? ' · ' + t(cur.notes.join(' · ')) : ''}</span></div>` : ''}
+    ${nxt ? `<div class="row"><span class="lbl">Далее</span><span class="what">${t(nxt.title)}</span><span class="when">${nxt.day.date === madridNow().date ? '' : t(nxt.day.label) + ', '}${fmt(nxt.from)}${nxt.notes.length ? ' · ' + t(nxt.notes.join(' · ')) : ''}</span></div>` : ''}
+    <a class="more" href="#schedule">Вся программа →</a></div>`;
+}
+const cities = () => new Set(S.teams.flatMap(x => x.city.split(',')).map(norm).filter(c => c && c !== 'сборная')).size;
+const teamsLine = () => { const c = cities(), n = S.teams.length; return `<b>${n}</b> ${plural(n, 'команда', 'команды', 'команд')}${c ? `: <b>${c}</b> ${plural(c, 'город', 'города', 'городов')} и сборные` : ''}`; };
+const N = () => { const st = standings(); return st ? st.tours.length : 0; };
+
+const pages = {
+  home() {
+    const c = S.cfg;
+    const days = S.days.map(d => d.weekday);
+    return `
+    <section class="hero"><div class="wrap">
+      <h1><img src="pan.webp" alt="${esc(c.name)}" width="740" height="643"></h1>
+      <div style="display:grid;gap:14px">
+        <div>${c.eyebrow ? `<div class="eyebrow">${t(c.eyebrow)}</div>` : ''}${c.champ ? `<p class="champ">${t(c.champ)}</p>` : ''}</div>
+        ${c.datesText ? `<div><span class="dates">${t(c.datesText)}</span></div>` : ''}
+        ${c.venue ? `<div class="venue"><b>${t(c.venue)}, Валенсия</b>${c.map ? `<a href="${esc(c.map)}" target="_blank" rel="noopener">Открыть на карте</a>` : ''}</div>` : ''}
+      </div>
+    </div></section>
+    <div class="wrap main">
+      ${nowCard()}
+      ${formButtons(['squads', 'reg'])}
+      <nav class="tiles" aria-label="Разделы">
+        <a class="tile" href="#results"><h2>Результаты</h2><p>ЧГК${N() ? ` — ${N()} ${plural(N(), 'тур', 'тура', 'туров')}` : ''}, КСИ, Эрудит-квартет</p></a>
+        <a class="tile" href="#teams"><h2>Команды</h2><p>${teamsLine()}</p></a>
+        <a class="tile" href="#schedule"><h2>Программа</h2><p>${t(cap(listJoin(days)))}: ЧГК, КСИ, Эрудит-квартет и «Кубок Риохи»</p></a>
+        <a class="tile" href="#info"><h2>Инфо</h2><p>Правила, апелляции, кто проводит, советы гостям</p></a>
+      </nav>
+    </div>`;
+  },
+
+  schedule() {
+    const { cur } = nowNext();
+    const kinds = [['chgk', 'ЧГК'], ['ksi', 'Командная своя игра'], ['ek', 'Эрудит-квартет'], ['rioja', '«Кубок Риохи»']]
+      .filter(([k]) => S.days.some(d => d.items.some(i => i.kind === k)));
+    return `
+    <div class="wrap main">
+      <div class="page-head"><h1>Программа</h1><p class="sub">Время местное. Если место не указано — ${t(S.cfg.venue || 'на площадке турнира')}.</p></div>
+      <div class="legend">${kinds.map(([k, l]) => `<span><i style="background:var(--k-${k})"></i>${l}</span>`).join('')}</div>
+      ${S.days.map(d => `
+        <section class="day"><h2>${t(d.label)}</h2>
+          ${d.notes.map(n => `<p class="muted">${t(n)}</p>`).join('')}
+          <div class="card slots">${d.items.map(it => {
+            const isNow = cur && cur.day.date === d.date && cur.from === it.from && cur.title === it.title;
+            return `<div class="slot k-${it.kind} ${isNow ? 'is-now' : ''}" ${isNow ? 'id="now-slot"' : ''}>
+              <div class="t">${fmt(it.from)}${it.to ? `<span>до ${fmt(it.to)}</span>` : ''}</div>
+              <div><h3>${t(it.title)}${isNow ? '<span class="live">сейчас</span>' : ''}</h3>${it.notes.map(n => `<p>${t(n)}</p>`).join('')}</div>
+            </div>`;
+          }).join('')}</div>
+        </section>`).join('') || '<div class="card empty">Программа появится скоро.</div>'}
+    </div>`;
+  },
+
+  teams() {
+    return `
+    <div class="wrap main">
+      <div class="page-head"><h1>Команды</h1><p class="sub">Заявлено ${teamsLine().replace(/<\/?b>/g, '')}.${S.teams.some(x => x.id) ? ' Название со ссылкой ведёт на страницу команды на турнирном сайте.' : ''}</p></div>
+      <input type="search" id="team-search" placeholder="Команда или город" aria-label="Поиск по командам">
+      <div class="card teams" id="team-list">${S.teams.map((x, i) => {
+        const where = [...new Set([x.city, x.country].filter(v => v && norm(v) !== 'сборная'))].join(', ') || (x.city || x.country ? 'Сборная' : '');
+        const name = withBat(x.name, /валенс/i.test(x.city));
+        return `<div class="team" data-q="${esc(norm(x.name + ' ' + x.city + ' ' + x.country))}">
+          <span class="n">${i + 1}</span>
+          <div class="name">${x.id ? `<a href="https://rating.chgk.info/teams/${x.id}" target="_blank" rel="noopener">${name}</a>` : name}${x.pending ? '<span class="pending">ждёт подтверждения</span>' : ''}</div>
+          <div class="where">${esc(where)}</div>
+        </div>`;
+      }).join('')}
+      <p class="empty" id="team-none" hidden>Никого не нашли.</p></div>
+      ${S.teamNotes.length ? `<p class="muted" style="font-size:.85rem">${S.teamNotes.map(esc).join('<br>')}</p>` : ''}
+      ${formButtons(['squads'])}
+    </div>`;
+  },
+
+  results() {
+    const sub = curPage() || 'results';
+    const tabs = [['results', 'ЧГК'], ['ksi', 'КСИ'], ['ek', 'Эрудит-квартет']];
+    let body = '';
+    if (sub === 'results') body = `<div id="chgk-box" style="display:grid;gap:12px"></div>`;
+    if (sub === 'ksi') {
+      const f = firstSlot('ksi'), topics = f?.title.match(/\(([^)]*)\)/)?.[1];
+      body = S.ksi && S.ksi.length > 1 ? genericTable(S.ksi)
+        : `<div class="card empty"><p><b>Командная своя игра</b>${f ? ` — ${esc(slotWhen(f))}` : ''}${topics ? `, ${t(topics)}` : ''}. Результаты появятся здесь после игры.</p></div>`;
+    }
+    if (sub === 'ek') {
+      const games = timeline().filter(x => x.kind === 'ek');
+      const stages = [];
+      for (const g of games) {
+        const [, stageName, rest] = g.title.replace(/^Эрудит-квартет\.\s*/i, '').match(/^(\D+?)(?:\s+(\d.*))?$/) || [, g.title, ''];
+        const nums = (rest || '').match(/\d+/g) || [''];
+        let st = stages.find(s => s.name === stageName); if (!st) stages.push(st = { name: stageName, games: [] });
+        for (const n of nums) st.games.push({ label: n ? `${stageName.replace(/ы$/, '')} ${n}` : stageName, time: fmt(g.from) });
+      }
+      body = S.ek && S.ek.length > 1 ? genericTable(S.ek) : `<p class="muted">${games[0] ? `${t(games[0].day.label)}, с ${fmt(games[0].from)}.` : ''} Результаты появятся по ходу игр.</p>
+        <div class="bracket">${stages.map(s => `<div class="stage"><h3>${t(s.name)}</h3><div class="card">${s.games.map(g => `<div class="match"><b>${t(g.label)}</b><span class="muted">${g.time}</span></div>`).join('')}</div></div>`).join('')}</div>`;
+    }
+    return `
+    <div class="wrap main">
+      <div class="page-head"><h1>Результаты</h1></div>
+      <nav class="seg" aria-label="Дисциплины">${tabs.map(([k, l]) => `<a href="#${k}" ${k === sub ? 'aria-current="page"' : ''}>${l}</a>`).join('')}</nav>
+      ${body}
+    </div>`;
+  },
+
+  info() {
+    const c = S.cfg, R = SNAP.rating, st = standings();
+    const tourDays = S.days.map(d => [d.weekday, d.items.filter(i => /тур\s*ЧГК/i.test(i.title)).length]).filter(([, n]) => n);
+    const sizes = S.days.flatMap(d => d.items.map(i => +(i.title.match(/тур\s*ЧГК\D*(\d+)\s*вопрос/i)?.[1] || 0)).filter(Boolean));
+    const total = sizes.reduce((a, b) => a + b, 0);
+    const crew = [['Оргкомитет', R.orgcommittee], ['Редакторы', R.editors], ['Игровое жюри', R.gameJury], ['Апелляционное жюри', R.appealJury]].filter(([, v]) => v);
+    const inDay = w => /а$/.test(w) ? w.replace(/а$/, 'у') : w;
+    return `
+    <div class="wrap main info">
+      <div class="page-head"><h1>Инфо</h1></div>
+      <nav class="toc" aria-label="На этой странице"><a href="#info" data-jump="i-rules">Правила</a><a href="#info" data-jump="i-appeals">Апелляции</a><a href="#info" data-jump="i-crew">Кто проводит</a><a href="#info" data-jump="i-guests">Гостям</a></nav>
+      <section id="i-rules"><h2>Правила и регламенты</h2>
+        ${c.links.rules ? `<a class="btn btn-soft" href="${esc(c.links.rules)}" target="_blank" rel="noopener">Открыть правила и регламенты</a>` : '<p>Готовятся и появятся здесь.</p>'}
+        ${sizes.length ? `<p>ЧГК: ${sizes.length} ${plural(sizes.length, 'тур', 'тура', 'туров')}, ${total} ${plural(total, 'вопрос', 'вопроса', 'вопросов')} (${sizes.join(' + ')})${tourDays.length ? `: ${tourDays.map(([d, n]) => `${n} ${plural(n, 'тур', 'тура', 'туров')} в ${inDay(d)}`).join(', ')}` : ''}.${st?.hasEs ? ' Кроме общего зачёта, есть испанский.' : ''}</p>` : ''}
+      </section>
+      <section id="i-appeals"><h2>Апелляции</h2>
+        <p>Принимаются только апелляции на зачёт ответа. Апелляционное жюри судит по правилам КВРМ. В форме нужно оставить контакт для возврата апелляционного залога.</p>
+        ${formButtons(['appeal'])}
+      </section>
+      <section id="i-crew"><h2>Кто проводит</h2>
+        <dl class="card crew">${crew.map(([k, v]) => `<dt>${k}</dt><dd>${t(v)}</dd>`).join('')}</dl>
+        <p class="muted" style="font-size:.85rem">По данным <a href="https://rating.chgk.info/tournament/${R.id}" target="_blank" rel="noopener">страницы турнира на rating.chgk.info</a>.</p>
+      </section>
+      <section id="i-forms"><h2>Формы</h2>${formButtons(['squads', 'reg', 'appeal'])}</section>
+      <section id="i-guests"><h2>Гостям Валенсии</h2>
+        <div class="tips">
+          ${c.venue ? `<article class="card"><h3>Площадка</h3><p>${t(c.venue)}.${c.map ? ` <a href="${esc(c.map)}" target="_blank" rel="noopener">Открыть на карте</a>` : ''}</p></article>` : ''}
+          <article class="card"><h3>Из аэропорта</h3><p>${t('Линии метро 3 и 5 идут из аэропорта в центр города, дорога около 25 минут.')} <a href="https://www.metrovalencia.es/" target="_blank" rel="noopener">metrovalencia.es</a></p></article>
+          <article class="card"><h3>Какая она, паэлья валенсиана</h3><p>${t('Классическая валенсийская паэлья — с курицей, кроликом, плоской зелёной фасолью и крупной белой фасолью гарроф. Курица, фасоль и гарроф есть и на нашей афише. Паэлью едят на обед, а не на ужин.')}</p></article>
+          <article class="card"><h3>Где попробовать</h3><p>${t('У пляжа Мальварроса — старые рестораны, где готовят паэлью, например La Pepica и Casa Carmela. Деревня Эль-Пальмар у озера Альбуфера считается родиной паэльи.')}</p></article>
+          <article class="card"><h3>Почему на афише летучая мышь</h3><p>${t('Летучая мышь, rat penat, венчает герб Валенсии. На сайте ею отмечены команды из Валенсии.')}</p></article>
+        </div>
+      </section>
+    </div>`;
+  },
+};
+
+/* ---------- Роутер ---------- */
+function route(fromNav = false) {
+  const h = curPage(), page = ROUTES[h], c = S.cfg;
+  document.title = page === 'home' ? c.name : `${({ schedule: 'Программа', teams: 'Команды', results: 'Результаты', info: 'Инфо' })[page]} · ${c.name}`;
+  document.getElementById('brand').textContent = c.name.replace(/\s+—\s+\d{4}$/, '');
+  document.querySelectorAll('[data-nav]').forEach(a => a.dataset.nav === page ? a.setAttribute('aria-current', 'page') : a.removeAttribute('aria-current'));
+  const strip = document.getElementById('strip');
+  strip.hidden = S.mode !== 'snapshot';
+  if (S.mode === 'snapshot') strip.innerHTML = `<div class="wrap">Данные на ${new Date(SNAP.fetchedAt).toLocaleString('ru-RU', { day: 'numeric', month: 'long', hour: '2-digit', minute: '2-digit' })}.</div>`;
+  $app.innerHTML = pages[page]();
+  if (h === 'results') renderChgk();
+  if (page === 'teams') {
+    const s = document.getElementById('team-search');
+    s.oninput = () => {
+      const q = norm(s.value); let shown = 0;
+      document.querySelectorAll('#team-list .team').forEach(el => { el.hidden = !!q && !el.dataset.q.includes(q); if (!el.hidden) shown++; });
+      document.getElementById('team-none').hidden = shown > 0;
+    };
+  }
+  if (page === 'schedule' && fromNav) document.getElementById('now-slot')?.scrollIntoView({ block: 'center' });
+  document.querySelectorAll('[data-jump]').forEach(a => a.onclick = e => { e.preventDefault(); document.getElementById(a.dataset.jump)?.scrollIntoView({ behavior: 'smooth' }); });
+  document.getElementById('foot').innerHTML = `<span>${t(c.name)} · Валенсия${c.datesText ? ' · ' + t(c.datesText) : ''}</span><a href="https://rating.chgk.info/tournament/${SNAP.rating.id}" target="_blank" rel="noopener">Турнир на rating.chgk.info</a>`;
+}
+
+let ticks = 0;
+async function tick() {
+  if (document.hidden) return;
+  ticks++;
+  if (S.mode === 'snapshot') { if (ticks % 2 === 0) { await loadBase(); if (S.mode === 'live') route(); } return; }
+  const h = curPage();
+  if (h === 'results' || h === 'ksi' || h === 'ek') {
+    const before = JSON.stringify([S.chgk, S.ksi, S.ek, S.tourTabs]);
+    const prev = standings();
+    await loadResults();
+    if (JSON.stringify([S.chgk, S.ksi, S.ek, S.tourTabs]) === before) { const st = document.getElementById('stamp'); if (st && S.at) st.textContent = `обновлено в ${S.at.toLocaleTimeString('ru-RU', { hour: '2-digit', minute: '2-digit' })}`; return; }
+    if (prev) prevPos = new Map(prev.list.map(x => [x.name, x.pos]));
+    h === 'results' ? renderChgk() : route();
+  } else if (h === '' || h === 'schedule') {
+    if (Date.now() - S.loadedAt > 300e3) await loadBase();
+    route(); // «сейчас / далее» сдвигается со временем
+  }
+}
+function loop() { setTimeout(async () => { try { await tick(); } finally { loop(); } }, (REFRESH_SEC + Math.random() * 10 - 5) * 1000); }
+
+async function start() {
+  document.documentElement.lang = 'ru';
+  await loadBase();
+  route(true);
+  window.addEventListener('hashchange', async () => {
+    if (S.mode === 'live' && Date.now() - S.loadedAt > 120e3) await loadBase();
+    else if (curPage().match(/^(results|ksi|ek)$/)) await loadResults();
+    window.scrollTo(0, 0); route(true);
+  });
+  loop();
+}
+start();
+</script>
+
+</body>
+</html>
