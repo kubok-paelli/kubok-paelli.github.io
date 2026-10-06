@@ -581,14 +581,8 @@ function standings(zachet = '') {
     const name = String(r[ci.name]).trim().replace(/\*+$/, '').trim(), m = meta.get(norm(name));
     return { name, city: m?.city || (ci.city >= 0 ? String(r[ci.city] ?? '').trim() : ''), local: /валенс/i.test(m?.city || ''),
       es: ci.es >= 0 && String(r[ci.es] ?? '').trim() !== '', placeRaw: ci.place >= 0 ? num(r[ci.place]) : null,
-      totalSheet: num(r[ci.total]) ?? 0, tours: tours.map(x => num(r[x.i])), shoot: ci.shoot >= 0 ? String(r[ci.shoot] ?? '').trim() : '' };
+      total: num(r[ci.total]) ?? 0, tours: tours.map(x => num(r[x.i])), shoot: ci.shoot >= 0 ? String(r[ci.shoot] ?? '').trim() : '' };
   });
-  // сумму считаем сами по турам: колонка «Всего» в таблице может считать не все туры
-  for (const x of list) x.total = tours.length ? x.tours.reduce((a, b) => a + (b ?? 0), 0) : x.totalSheet;
-  // «Место» из таблицы берём, только если оно согласуется с суммой (перестрелка может развести равные суммы)
-  const byPlace = [...list].filter(x => x.placeRaw != null).sort((a, b) => a.placeRaw - b.placeRaw);
-  const placesOk = byPlace.length === list.length && byPlace.every((x, i) => !i || (x.total <= byPlace[i - 1].total && (x.placeRaw !== byPlace[i - 1].placeRaw || x.total === byPlace[i - 1].total)));
-  if (!placesOk) for (const x of list) x.placeRaw = null;
   if (zachet === 'es') list = list.filter(x => x.es);
   list.sort((a, b) => (a.placeRaw ?? 1e9) - (b.placeRaw ?? 1e9) || b.total - a.total || a.name.localeCompare(b.name, 'ru'));
   const same = (a, b) => a.placeRaw != null ? a.placeRaw === b.placeRaw : a.total === b.total;
