@@ -633,7 +633,7 @@ function standings(zachet = '') {
     i = j;
   }
   const played = tours.map((_, k) => list.some(x => x.tours[k]));
-  return { tours: tours.map(x => x.n), list, played, hasShoot: list.some(x => x.shoot !== ''), hasEs: ci.es >= 0 && list.some(x => x.es) };
+  return { tours: tours.map(x => x.n), list, played, hasShoot: list.some(x => x.shoot !== '' && +x.shoot.replace(',', '.') !== 0) /* колонка из одних нулей — перестрелки не было */, hasEs: ci.es >= 0 && list.some(x => x.es) };
 }
 // вкладка «N тур»: № | Название команды | Итого | номера вопросов
 function tourMarks(k) {
