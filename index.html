@@ -505,6 +505,17 @@ function parseSchedule(txt, year) {
   return days;
 }
 
+// число вопросов в турах ЧГК — официальное, с турнирного сайта (в документе с расписанием может отставать)
+function officialTourSizes(days) {
+  const sizes = SNAP.rating?.tours || [];
+  for (const d of days) for (const it of d.items) {
+    it.title = it.title.replace(/(\d+)(-й\s*тур\s*ЧГК\D*?)(\d+)(\s*вопрос\S*)/i, (m, k, mid, n, tail) => {
+      const q = sizes[+k - 1];
+      return q ? `${k}${mid}${q} ${plural(q, 'вопрос', 'вопроса', 'вопросов')}` : m;
+    });
+  }
+}
+
 /* ---------- Разбор участников ---------- */
 function parseTeams(csv) {
   const rows = parseCSV(csv);
@@ -544,6 +555,7 @@ async function loadBase() {
   if (teamsCsv || !S.teams.length) { const tm = parseTeams(teamsCsv || SNAP.teams); S.teams = tm.list; S.teamNotes = tm.notes; }
   const days = schedTxt ? parseSchedule(schedTxt, S.cfg.year) : [];
   if (days.length) S.days = days; else if (!S.days.length) S.days = parseSchedule(SNAP.schedule, S.cfg.year);
+  officialTourSizes(S.days);
   S.loadedAt = Date.now();
   await loadResults();
 }
