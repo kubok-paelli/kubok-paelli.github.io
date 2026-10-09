@@ -480,7 +480,7 @@ function kindOf(s) {
   if (/перерыв/i.test(s)) return 'break';
   if (/риох/i.test(s)) return 'rioja';
   if (/эрудит/i.test(s)) return 'ek';
-  if (/своя игра|кси/i.test(s)) return 'ksi';
+  if (/своя игра|(?<![а-яё])кси(?![а-яё])/i.test(s)) return 'ksi'; // «КСИ» — отдельным словом, не внутри «Максим»
   if (/чгк|перестрелк|награжд/i.test(s)) return 'chgk';
   return 'other';
 }
