@@ -767,13 +767,13 @@ function ksiStandings() {
 function ksiTable(st) {
   const body = st.list.map(x => `<tr class="${x.pos === 1 && st.played.some(Boolean) ? 'lead' : ''}">
       <td class="c-left"><div class="cl"><span class="pl">${x.placeText}</span><span><b>${esc(x.name)}</b>${x.city ? `<span class="city">${esc(x.city)}</span>` : ''}</span></div></td>
-      <td class="c-sum"><div class="cs">${x.total}</div></td>${st.hasPlus ? `<td class="tr">${esc(x.plus)}</td>` : ''}
-      ${x.themes.map((v, k) => `<td class="tr ${st.played[k] ? '' : 'future'}">${st.played[k] ? (v ?? 0) : '·'}</td>`).join('')}</tr>`).join('');
+      <td class="c-sum"><div class="cs">${x.total}</div></td>
+      ${x.themes.map((v, k) => `<td class="tr ${st.played[k] ? '' : 'future'}">${st.played[k] ? (v ?? 0) : '·'}</td>`).join('')}${st.hasPlus ? `<td class="tr">${esc(x.plus)}</td>` : ''}</tr>`).join('');
   return `
     <div class="status"><span class="big">${S.mode === 'live' ? '<span class="live-dot" aria-hidden="true"></span>' : ''}Командная своя игра</span>${S.mode === 'live' && S.at ? `<span class="stamp">обновлено в ${hms(S.at)}</span>` : ''}</div>
     <div class="card scroll res-card">
       <table class="res">
-        <thead><tr><th class="c-left"><div class="cl"><span title="Место">М</span><span>Команда</span></div></th><th class="c-sum" title="Сумма"><div class="cs">Σ</div></th>${st.hasPlus ? '<th class="tr">Σ+</th>' : ''}${st.themes.map(n => `<th class="tr">Тема ${esc(n)}</th>`).join('')}</tr></thead>
+        <thead><tr><th class="c-left"><div class="cl"><span title="Место">М</span><span>Команда</span></div></th><th class="c-sum" title="Сумма"><div class="cs">Σ</div></th>${st.themes.map(n => `<th class="tr">Тема ${esc(n)}</th>`).join('')}${st.hasPlus ? '<th class="tr">Σ+</th>' : ''}</tr></thead>
         <tbody>${body}</tbody>
       </table>
     </div>
