@@ -991,7 +991,7 @@ const pages = {
         <dl class="card crew">${crew.map(([k, v]) => `<dt>${k}</dt><dd>${t(v)}</dd>`).join('')}</dl>
         <p class="muted" style="font-size:.85rem">По данным <a href="https://rating.chgk.info/tournament/${R.id}" target="_blank" rel="noopener">страницы турнира на rating.chgk.info</a>.</p>
       </section>
-      <section id="i-forms"><h2>Формы</h2>${formButtons(['squads', 'reg', 'disputed', 'appeal'])}</section>
+      <section id="i-forms"><h2>Формы</h2>${formButtons(['squads', 'reg'])}</section>
       <section id="i-guests"><h2>Гостям Валенсии</h2>
         <div class="tips">
           ${c.venue ? `<article class="card"><h3>Площадка</h3><p>${t(c.venue)}.${c.map ? ` <a href="${esc(c.map)}" target="_blank" rel="noopener">Открыть на карте</a>` : ''}</p></article>` : ''}
