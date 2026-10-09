@@ -242,9 +242,10 @@ tbody tr:last-child td { border-bottom: 0; }
 .res .cl .city { display: block; color: var(--muted); font-size: .8rem; line-height: 1.25; }
 .res .cs { width: var(--w-sum); text-align: center; padding: 7px 0; }
 .res td .cs { font: 700 1.15rem/1.3 var(--f-ui); }
-.res thead .cs { color: var(--fg); font-size: .95rem; }
 .res .tr { text-align: center; font: 500 1.05rem/1.3 var(--f-ui); min-width: 2.7rem; }
 .res td.tr.future { color: var(--muted); }
+/* все подписи в шапке таблицы — одним шрифтом: «М», «Команда», «Σ», «Σ+», «Тур N», «Тема N» */
+.res thead th.tr { font: 600 .7rem/1.2 var(--f-ui); letter-spacing: .06em; }
 .res th.tr button { border: 0; background: transparent; color: inherit; font: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; min-height: 40px; padding: 4px 6px; border-radius: 8px; }
 .res th.q, .res td.q { padding: 9px 2px; text-align: center; min-width: 1.5rem; }
 .res th.q { font-size: .72rem; letter-spacing: 0; }
