@@ -215,12 +215,13 @@ p { margin: 0; }
 /* Команды */
 input[type="search"] { font: inherit; width: 100%; min-height: 46px; padding: 10px 14px; border-radius: 12px; border: 1px solid var(--line); background: var(--surface); color: var(--fg); }
 .teams { display: grid; }
-.team { display: grid; grid-template-columns: 2.2rem minmax(0, 1fr); gap: 2px 10px; padding: 12px 16px; align-items: baseline; }
+/* размеры — как у строк таблицы результатов (.res .cl): одна и та же команда выглядит на сайте одинаково */
+.team { display: grid; grid-template-columns: 2.2rem minmax(0, 1fr); gap: 1px 10px; padding: 8px 16px; align-items: baseline; }
 .team + .team { border-top: 1px solid var(--line); }
-.team .n { font: 600 .9rem/1.3 var(--f-ui); color: var(--muted); font-variant-numeric: tabular-nums; }
-.team .name { font: 700 1.05rem/1.3 var(--f-ui); }
+.team .n { font: 600 .82rem/1.2 var(--f-ui); color: var(--muted); font-variant-numeric: tabular-nums; }
+.team .name { font: 600 .86rem/1.2 var(--f-ui); }
 .team .name a { text-decoration-color: var(--line); text-underline-offset: 3px; display: inline-block; padding-block: 10px; margin-block: -10px; }
-.team .where { grid-column: 2; font-size: .88rem; color: var(--muted); }
+.team .where { grid-column: 2; font-size: .72rem; line-height: 1.25; color: var(--muted); }
 .pending { display: inline-block; font: 600 .7rem/1 var(--f-ui); padding: 4px 7px; border-radius: 999px; background: var(--warn-bg); color: var(--warn-fg); vertical-align: 2px; margin-left: 4px; white-space: nowrap; }
 .bat-mini { display: inline-block; width: 18px; height: 8px; color: var(--muted); vertical-align: 2px; margin-left: 5px; }
 .bat-mini svg { display: block; width: 100%; height: 100%; }
