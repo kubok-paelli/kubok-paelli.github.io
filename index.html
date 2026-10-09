@@ -418,14 +418,15 @@ async function fetchText(url) {
 }
 const docUrl = id => `https://docs.google.com/document/d/${id}/export?format=txt`;
 const sheetId = link => link?.match(/spreadsheets\/d\/([\w-]+)/)?.[1];
-function sheetUrl(link, tab, raw) {
+// headers: сколько строк сверху считать заголовком (0 — читать всё как данные); без него Google угадывает сам и иногда теряет подписи колонок
+function sheetUrl(link, tab, headers) {
   const id = sheetId(link); if (!id) return null;
   const gid = link.match(/[#&?]gid=(\d+)/)?.[1];
   const which = tab ? `&sheet=${encodeURIComponent(tab)}` : gid ? `&gid=${gid}` : '';
-  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv${which}${raw ? '&headers=0' : ''}&t=${Date.now()}`;
+  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv${which}${headers != null ? `&headers=${headers}` : ''}&t=${Date.now()}`;
 }
 const docId = link => link?.match(/document\/d\/([\w-]+)/)?.[1];
-const getRows = async (link, tab, raw) => { const u = link && sheetUrl(link, tab, raw); if (!u) return null; try { return parseCSV(await fetchText(u)); } catch { return null; } };
+const getRows = async (link, tab, headers) => { const u = link && sheetUrl(link, tab, headers); if (!u) return null; try { return parseCSV(await fetchText(u)); } catch { return null; } };
 
 /* ---------- Разбор «Мини-сайта» ---------- */
 function parseHub(txt) {
@@ -567,7 +568,7 @@ async function loadResults() {
   }
   const L = S.cfg.links;
   const open = [...ui.open].concat(ui.all ? standings()?.tours.map((_, k) => k) || [] : []);
-  const [chgk, ksi, ek, ...tabs] = await Promise.all([getRows(L.chgk, 'Общий зачёт').then(r => r ?? getRows(L.chgk)), getRows(L.ksi), getRows(L.ek, 'ЭК сетка', true),
+  const [chgk, ksi, ek, ...tabs] = await Promise.all([getRows(L.chgk, 'Общий зачёт').then(r => r ?? getRows(L.chgk)), getRows(L.ksi, null, 1), getRows(L.ek, 'ЭК сетка', 0),
     ...[...new Set(open)].map(k => getRows(L.chgk, `${k + 1} тур`).then(r => [k, r]))]);
   S.chgk = chgk ?? S.chgk; S.ksi = ksi ?? S.ksi; S.ek = ek ?? S.ek;
   for (const [k, r] of tabs) if (r) S.tourTabs[k] = r;
@@ -757,7 +758,7 @@ function ksiStandings() {
   const same = (a, b) => fromSheet ? a.placeRaw === b.placeRaw : a.total === b.total;
   for (let i = 0; i < list.length;) {
     let j = i; while (j < list.length && same(list[j], list[i])) j++;
-    for (let k = i; k < j; k++) { list[k].pos = i + 1; list[k].placeText = j - i > 1 ? `${i + 1}–${j}` : `${i + 1}`; }
+    for (let k = i; k < j; k++) { list[k].pos = i + 1; list[k].placeText = fromSheet && list[k].placeRaw == null ? '' : j - i > 1 ? `${i + 1}–${j}` : `${i + 1}`; } // пустое/ошибочное «Место» в таблице — пустое и на сайте
     i = j;
   }
   return { themes: themes.map(x => x.n), list, hasPlus: list.some(x => x.plus !== ''), played: themes.map((_, k) => list.some(x => x.themes[k])) };
