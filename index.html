@@ -947,7 +947,7 @@ const pages = {
   info() {
     const c = S.cfg, R = SNAP.rating, st = standings();
     const tourDays = S.days.map(d => [d.weekday, d.items.filter(i => /тур\s*ЧГК/i.test(i.title)).length]).filter(([, n]) => n);
-    const sizes = S.days.flatMap(d => d.items.map(i => +(i.title.match(/тур\s*ЧГК\D*(\d+)\s*вопрос/i)?.[1] || 0)).filter(Boolean));
+    const sizes = R.tours; // формат — с турнирного сайта (официальный)
     const total = sizes.reduce((a, b) => a + b, 0);
     const crew = [['Оргкомитет', R.orgcommittee], ['Редакторы', R.editors], ['Игровое жюри', R.gameJury], ['Апелляционное жюри', R.appealJury]].filter(([, v]) => v);
     const inDay = w => /а$/.test(w) ? w.replace(/а$/, 'у') : w;
