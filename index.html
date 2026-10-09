@@ -978,7 +978,7 @@ const pages = {
     return `
     <div class="wrap main info">
       <div class="page-head"><h1>Инфо</h1></div>
-      <nav class="toc" aria-label="На этой странице"><a href="#info" data-jump="i-rules">Правила</a><a href="#info" data-jump="i-appeals">Спорные и апелляции</a><a href="#info" data-jump="i-crew">Кто проводит</a><a href="#info" data-jump="i-guests">Гостям</a></nav>
+      <nav class="toc" aria-label="На этой странице"><a href="#info" data-jump="i-rules">Правила</a><a href="#info" data-jump="i-appeals">Спорные и апелляции</a><a href="#info" data-jump="i-crew">Кто проводит</a><a href="#info" data-jump="i-contacts">Контакты</a><a href="#info" data-jump="i-guests">Гостям</a></nav>
       <section id="i-rules"><h2>Правила и регламенты</h2>
         ${rules}
         ${rules ? '' : c.links.rules ? `<a class="btn btn-soft" href="${esc(c.links.rules)}" target="_blank" rel="noopener">Открыть документ с правилами</a>` : '<p>Готовятся и появятся здесь.</p>'}
@@ -991,6 +991,13 @@ const pages = {
       <section id="i-crew"><h2>Кто проводит</h2>
         <dl class="card crew">${crew.map(([k, v]) => `<dt>${k}</dt><dd>${t(v)}</dd>`).join('')}</dl>
         <p class="muted" style="font-size:.85rem">По данным <a href="https://rating.chgk.info/tournament/${R.id}" target="_blank" rel="noopener">страницы турнира на rating.chgk.info</a>.</p>
+      </section>
+      <section id="i-contacts"><h2>Контакты</h2>
+        <p>Вопросы по турниру и замечания по сайту — организаторам в Telegram.</p>
+        <dl class="card crew">
+          <dt>Канал фестиваля</dt><dd><a href="https://t.me/paella_cup" target="_blank" rel="noopener">@paella_cup</a> — новости и объявления</dd>
+          <dt>Организаторы</dt><dd>Юрий Васильев-Куклин — <a href="https://t.me/iurii_vasilev" target="_blank" rel="noopener">@iurii_vasilev</a><br>Станислав Сапежинский — <a href="https://t.me/stanislausap" target="_blank" rel="noopener">@stanislausap</a></dd>
+        </dl>
       </section>
       <section id="i-forms"><h2>Формы</h2>${formButtons(['squads', 'reg'])}</section>
       <section id="i-guests"><h2>Гостям Валенсии</h2>
