@@ -672,7 +672,7 @@ function chgkTable(st) {
       }
     });
     const city = x.city || x.es ? `<span class="city">${esc(x.city)}${x.es ? `${x.city ? ' · ' : ''}<abbr title="испанский зачёт">ES</abbr>` : ''}</span>` : '';
-    return `<tr class="${x.pos === 1 ? 'lead' : ''}">
+    return `<tr class="${x.pos === 1 && st.played.some(Boolean) ? 'lead' : ''}">
       <td class="c-left"><div class="cl"><span class="pl">${x.placeText}${move}</span><span><b>${esc(x.name)}</b>${city}</span></div></td>
       <td class="c-sum"><div class="cs">${x.total}</div></td>${cells}${st.hasShoot ? `<td class="tr">${esc(x.shoot)}</td>` : ''}</tr>`;
   }).join('');
