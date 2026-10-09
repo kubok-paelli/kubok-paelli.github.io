@@ -803,14 +803,24 @@ function ekGames() {
 }
 function ekBracket(stages) {
   const title = { 'четвертьфинал': 'Четвертьфиналы', 'полуфинал': 'Полуфиналы', 'финал': 'Финал' };
+  // кто прошёл дальше — ровно те, кого сама сетка поставила в следующий этап (посев «Ч1-1», «П2-2» и т. п.)
+  const next = { 'четвертьфинал': ['полуфинал', 'Ч'], 'полуфинал': ['финал', 'П'] };
+  const advancing = (st, x) => {
+    if (!next[st]) return null;
+    const [nst, code] = next[st];
+    const re = new RegExp(`^${code}\\s*${x.num}\\s*-\\s*[12]$`, 'i');
+    const names = stages.filter(s => s.stage === nst).flatMap(s => s.games).flatMap(g => g.teams).filter(tm => re.test(tm.seed)).map(tm => norm(tm.name));
+    return new Set(names);
+  };
   const game = (st, x) => {
-    const played = x.teams.some(tm => parseFloat(tm.result) > 0);
+    const played = x.teams.some(tm => tm.result !== '' && parseFloat(tm.result) !== 0);
+    const adv = advancing(st, x);
     const teams = played ? [...x.teams].sort((a, b) => (+a.place || 99) - (+b.place || 99)) : x.teams;
     return `<div class="card game">
       <div class="ghead"><b>${st === 'финал' ? 'Финал' : `${title[st].replace(/ы$/, '')} ${x.num}`}</b><span class="muted">${[x.time, x.hall].filter(Boolean).map(esc).join(' · ')}</span></div>
       ${teams.map(tm => {
-        const adv = played && (st === 'финал' ? +tm.place === 1 : +tm.place <= 2);
-        return `<div class="gteam ${adv ? 'adv' : ''}"><span class="gpl">${played && tm.place ? esc(tm.place) : ''}</span>
+        const isAdv = played && !!tm.name && (adv ? adv.has(norm(tm.name)) : +tm.place === 1);
+        return `<div class="gteam ${isAdv ? 'adv' : ''}"><span class="gpl">${played && tm.place ? esc(tm.place) : ''}</span>
           <span class="gname">${tm.name ? esc(tm.name) : '<span class="muted">—</span>'}${tm.seed ? `<span class="city">посев ${esc(tm.seed)}</span>` : ''}</span>
           <span class="gres">${played ? esc(tm.result) : ''}</span></div>`;
       }).join('')}
