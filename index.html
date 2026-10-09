@@ -295,6 +295,20 @@ tbody tr:last-child td { border-bottom: 0; }
 .match + .match { border-top: 1px solid var(--line); }
 .match b { font: 700 1rem/1.3 var(--f-ui); }
 
+.game { padding: 4px 0; }
+.ghead { display: flex; justify-content: space-between; align-items: baseline; gap: 10px; padding: 10px 16px 6px; }
+.ghead b { font: 700 1rem/1.3 var(--f-ui); }
+.gteam { display: grid; grid-template-columns: 1.6rem minmax(0, 1fr) auto; gap: 10px; align-items: center; padding: 8px 16px; border-top: 1px solid var(--line); }
+.gteam .gpl { font: 700 .95rem/1 var(--f-ui); color: var(--muted); }
+.gteam .gname { font: 600 1rem/1.25 var(--f-ui); min-width: 0; }
+.gteam .gname .city { display: block; font-weight: 400; font-size: .8rem; color: var(--muted); }
+.gteam .gres { font: 700 1.1rem/1 var(--f-ui); font-variant-numeric: tabular-nums; }
+.gteam.adv { background: var(--lead-bg); box-shadow: inset 4px 0 0 var(--take); }
+.gteam.adv .gpl { color: var(--fg); }
+.rules summary { cursor: pointer; padding: 14px 16px; font: 600 1rem/1.3 var(--f-ui); }
+.rules-body { padding: 0 16px 16px; display: grid; gap: 8px; }
+.rules-body h3 { margin-top: 8px; font-size: 1rem; }
+
 /* Инфо */
 .info { display: grid; gap: 22px; }
 .info section { display: grid; gap: 10px; scroll-margin-top: 64px; }
@@ -403,37 +417,42 @@ async function fetchText(url) {
 }
 const docUrl = id => `https://docs.google.com/document/d/${id}/export?format=txt`;
 const sheetId = link => link?.match(/spreadsheets\/d\/([\w-]+)/)?.[1];
-function sheetUrl(link, tab) {
+function sheetUrl(link, tab, raw) {
   const id = sheetId(link); if (!id) return null;
   const gid = link.match(/[#&?]gid=(\d+)/)?.[1];
   const which = tab ? `&sheet=${encodeURIComponent(tab)}` : gid ? `&gid=${gid}` : '';
-  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv${which}&t=${Date.now()}`;
+  return `https://docs.google.com/spreadsheets/d/${id}/gviz/tq?tqx=out:csv${which}${raw ? '&headers=0' : ''}&t=${Date.now()}`;
 }
 const docId = link => link?.match(/document\/d\/([\w-]+)/)?.[1];
-const getRows = async (link, tab) => { const u = link && sheetUrl(link, tab); if (!u) return null; try { return parseCSV(await fetchText(u)); } catch { return null; } };
+const getRows = async (link, tab, raw) => { const u = link && sheetUrl(link, tab, raw); if (!u) return null; try { return parseCSV(await fetchText(u)); } catch { return null; } };
 
 /* ---------- Разбор «Мини-сайта» ---------- */
 function parseHub(txt) {
   const lines = txt.split(/\r?\n/).map(s => s.replace(/ /g, ' ').trim());
   const cfg = { title: [], dates: '', venue: '', map: '', links: {}, notReady: new Set() };
-  let block = '';
+  let block = '', lastKey = null;
   for (const line of lines) {
     if (!line) continue;
     const head = line.match(/^(заголовок|информация|разделы)\s*:?\s*(.*)$/i);
     if (head) { block = head[1].toLowerCase(); if (head[2]) cfg.title.push(head[2]); continue; }
     const url = line.match(/https?:\/\/\S+/)?.[0];
-    const label = (url ? line.slice(0, line.indexOf(url)) : line).replace(/\(пока не готово\)/i, '').replace(/[\s\-–—:]+$/, '').trim();
+    const label = (url ? line.slice(0, line.indexOf(url)) : line).replace(/\(пока не готово\)/i, '').replace(/^upd\d*\s*[-–—:]?\s*/i, '').replace(/[\s\-–—:]+$/, '').trim();
     if (/^даты[^:]*:/i.test(line)) { cfg.dates = line.replace(/^даты[^:]*:\s*/i, ''); continue; }
     if (/^место[^:]*:/i.test(label)) { cfg.venue = label.replace(/^место[^:]*:\s*/i, ''); cfg.map = url || ''; continue; }
     if (block === 'заголовок' && !url) { cfg.title.push(label); continue; }
     let key = null;
-    if (url && /forms\.gle|\/forms\//.test(url)) key = /апелляц/i.test(label) ? 'formAppeal' : /состав/i.test(label) ? 'formSquads' : 'formReg';
+    if (/спорн/i.test(label)) key = 'formDisputed';
+    else if (/апелляц/i.test(label)) key = 'formAppeal';
+    else if (/состав/i.test(label)) key = 'formSquads';
+    else if (/регистрац|дисциплин/i.test(label)) key = 'formReg';
     else if (/^результат/i.test(label)) key = /кси|своя/i.test(label) ? 'ksi' : /эрудит/i.test(label) ? 'ek' : 'chgk';
     else if (/правил|регламент|положени/i.test(label)) key = 'rules';
     else if (/расписан|программ/i.test(label)) key = 'schedule';
     else if (/участник|команд/i.test(label)) key = 'teams';
+    if (key) lastKey = key;
+    else if (url) key = lastKey; // «UPD1 - вот ссылка…» и голая ссылка — к разделу выше
     if (!key) continue;
-    if (url) { if (!cfg.links[key]) cfg.links[key] = url; } else if (/не готово/i.test(line)) cfg.notReady.add(key);
+    if (url) { cfg.links[key] = url; cfg.notReady.delete(key); } else if (/не готово/i.test(line)) cfg.notReady.add(key);
   }
   // «Международный фестиваль … Кубок Паэльи - 2026.» → надзаголовок + название
   const t1 = (cfg.title[0] || 'Кубок Паэльи').replace(/\s+/g, ' ').replace(/\.$/, '').replace(/\s-\s/g, ' — ');
@@ -508,7 +527,7 @@ function parseTeams(csv) {
 }
 
 /* ---------- Состояние ---------- */
-const S = { mode: 'snapshot', cfg: null, days: [], teams: [], teamNotes: [], chgk: null, tourTabs: {}, ksi: null, ek: null, at: null, loadedAt: 0 };
+const S = { mode: 'snapshot', cfg: null, days: [], teams: [], teamNotes: [], chgk: null, tourTabs: {}, ksi: null, ek: null, rulesTxt: null, at: null, loadedAt: 0 };
 
 async function loadBase() {
   let hub;
@@ -516,10 +535,12 @@ async function loadBase() {
   catch { if (S.cfg) return; hub = SNAP.hub; S.mode = 'snapshot'; }
   S.cfg = parseHub(hub);
   const L = S.cfg.links, live = S.mode === 'live';
-  const [teamsCsv, schedTxt] = await Promise.all([
+  const [teamsCsv, schedTxt, rulesTxt] = await Promise.all([
     live && L.teams ? fetchText(sheetUrl(L.teams)).catch(() => null) : null,
     live && docId(L.schedule) ? fetchText(docUrl(docId(L.schedule))).catch(() => null) : null,
+    live && docId(L.rules) ? fetchText(docUrl(docId(L.rules))).catch(() => null) : null,
   ]);
+  if (rulesTxt) S.rulesTxt = rulesTxt;
   if (teamsCsv || !S.teams.length) { const tm = parseTeams(teamsCsv || SNAP.teams); S.teams = tm.list; S.teamNotes = tm.notes; }
   const days = schedTxt ? parseSchedule(schedTxt, S.cfg.year) : [];
   if (days.length) S.days = days; else if (!S.days.length) S.days = parseSchedule(SNAP.schedule, S.cfg.year);
@@ -533,7 +554,7 @@ async function loadResults() {
   }
   const L = S.cfg.links;
   const open = [...ui.open].concat(ui.all ? standings()?.tours.map((_, k) => k) || [] : []);
-  const [chgk, ksi, ek, ...tabs] = await Promise.all([getRows(L.chgk, 'Общий зачёт').then(r => r ?? getRows(L.chgk)), getRows(L.ksi), getRows(L.ek),
+  const [chgk, ksi, ek, ...tabs] = await Promise.all([getRows(L.chgk, 'Общий зачёт').then(r => r ?? getRows(L.chgk)), getRows(L.ksi), getRows(L.ek, 'ЭК сетка', true),
     ...[...new Set(open)].map(k => getRows(L.chgk, `${k + 1} тур`).then(r => [k, r]))]);
   S.chgk = chgk ?? S.chgk; S.ksi = ksi ?? S.ksi; S.ek = ek ?? S.ek;
   for (const [k, r] of tabs) if (r) S.tourTabs[k] = r;
@@ -697,11 +718,111 @@ function renderChgk() {
   const sc = box.querySelector('.scroll'); if (sc) sc.scrollLeft = scroll;
 }
 
+/* ---------- КСИ: вкладка «КСИ итог» ---------- */
+// № | Место | Команда | Σ | Σ+ | 1…10 (суммы по темам)
+function ksiStandings() {
+  const rows = S.ksi; if (!rows) return null;
+  const h = rows.findIndex(r => r.some(c => /^команда$/i.test(String(c).trim())));
+  if (h < 0) return null;
+  const head = rows[h].map(c => String(c).trim());
+  const ni = head.findIndex(c => /^команда$/i.test(c)), pi = head.findIndex(c => /^место$/i.test(c));
+  let ti = head.findIndex(c => /^(σ|сумма|всего|итого)$/i.test(c));
+  if (ti < 0 && head[ni + 1] === '') ti = ni + 1; // колонка суммы без заголовка сразу после команды
+  const plusI = head.findIndex(c => /^σ\+$/i.test(c));
+  const themes = head.map((c, i) => ({ n: c, i })).filter(x => /^\d+$/.test(x.n) && x.i > ni);
+  if (ti < 0) return null;
+  const num = v => { const n = parseFloat(String(v ?? '').replace(',', '.')); return isNaN(n) ? null : n; };
+  const meta = new Map(S.teams.map(x => [norm(x.name), x]));
+  const list = rows.slice(h + 1).filter(r => String(r[ni] ?? '').trim() && !/^-+$/.test(String(r[ni]).trim())).map(r => {
+    const name = String(r[ni]).trim(), m = meta.get(norm(name));
+    return { name, city: m?.city || '', placeRaw: pi >= 0 ? num(r[pi]) : null, total: num(r[ti]) ?? 0,
+      plus: plusI >= 0 ? String(r[plusI] ?? '').trim() : '', themes: themes.map(x => num(r[x.i])) };
+  });
+  // «Место» из таблицы, если заполнено; иначе — по сумме, равные суммы делят место
+  const fromSheet = list.some(x => x.placeRaw != null);
+  list.sort((a, b) => fromSheet ? (a.placeRaw ?? 1e9) - (b.placeRaw ?? 1e9) || b.total - a.total : b.total - a.total || a.name.localeCompare(b.name, 'ru'));
+  const same = (a, b) => fromSheet ? a.placeRaw === b.placeRaw : a.total === b.total;
+  for (let i = 0; i < list.length;) {
+    let j = i; while (j < list.length && same(list[j], list[i])) j++;
+    for (let k = i; k < j; k++) { list[k].pos = i + 1; list[k].placeText = j - i > 1 ? `${i + 1}–${j}` : `${i + 1}`; }
+    i = j;
+  }
+  return { themes: themes.map(x => x.n), list, hasPlus: list.some(x => x.plus !== ''), played: themes.map((_, k) => list.some(x => x.themes[k])) };
+}
+function ksiTable(st) {
+  const body = st.list.map(x => `<tr class="${x.pos === 1 && st.played.some(Boolean) ? 'lead' : ''}">
+      <td class="c-left"><div class="cl"><span class="pl">${x.placeText}</span><span><b>${esc(x.name)}</b>${x.city ? `<span class="city">${esc(x.city)}</span>` : ''}</span></div></td>
+      <td class="c-sum"><div class="cs">${x.total}</div></td>${st.hasPlus ? `<td class="tr">${esc(x.plus)}</td>` : ''}
+      ${x.themes.map((v, k) => `<td class="tr ${st.played[k] ? '' : 'future'}">${st.played[k] ? (v ?? 0) : '·'}</td>`).join('')}</tr>`).join('');
+  return `
+    <div class="status"><span class="big">${S.mode === 'live' ? '<span class="live-dot" aria-hidden="true"></span>' : ''}Командная своя игра</span>${S.mode === 'live' && S.at ? `<span class="stamp">обновлено в ${hms(S.at)}</span>` : ''}</div>
+    <div class="card scroll res-card">
+      <table class="res">
+        <thead><tr><th class="c-left"><div class="cl"><span title="Место">М</span><span>Команда</span></div></th><th class="c-sum" title="Сумма"><div class="cs">Σ</div></th>${st.hasPlus ? '<th class="tr">Σ+</th>' : ''}${st.themes.map(n => `<th class="tr">Тема ${esc(n)}</th>`).join('')}</tr></thead>
+        <tbody>${body}</tbody>
+      </table>
+    </div>
+    <p class="muted" style="font-size:.8rem">Листайте таблицу вбок: суммы по темам. Одинаковое место у нескольких команд пишется так: «3–4».</p>`;
+}
+
+/* ---------- Эрудит-квартет: вкладка «ЭК сетка» ---------- */
+// блоки «Четвертьфинал №1 - 16.00, Малый зал» → строки: Команда | Посев | Результат | Место
+const EK_STAGES = ['четвертьфинал', 'полуфинал', 'финал'];
+function ekGames() {
+  const g = S.ek; if (!g) return null;
+  const cell = (r, c) => String(g[r]?.[c] ?? '').trim();
+  const games = [];
+  for (let r = 0; r < g.length; r++) for (let c = 0; c < (g[r] || []).length; c++) {
+    const m = cell(r, c).match(/^(четвертьфинал|полуфинал|финал)\s*(?:№\s*(\d+))?\s*(?:[-–—]\s*(\d{1,2})[.:](\d{2}))?\s*,?\s*(.*)$/i);
+    if (!m) continue;
+    const teams = [];
+    for (let k = r + 1; k < g.length; k++) {
+      const name = cell(k, c);
+      if (/^(четвертьфинал|полуфинал|финал)/i.test(name)) break;
+      if (/^команда$/i.test(name)) continue;
+      if (!name) { if (teams.length) break; continue; }
+      teams.push({ name: /^-+$/.test(name) ? '' : name, seed: cell(k, c + 1), result: cell(k, c + 2), place: cell(k, c + 3) });
+    }
+    games.push({ stage: m[1].toLowerCase(), num: m[2] || '', time: m[3] ? `${+m[3]}:${m[4]}` : '', hall: m[5] || '', teams });
+  }
+  if (!games.length) return null;
+  return EK_STAGES.map(st => ({ stage: st, games: games.filter(x => x.stage === st).sort((a, b) => (+a.num || 0) - (+b.num || 0)) })).filter(x => x.games.length);
+}
+function ekBracket(stages) {
+  const title = { 'четвертьфинал': 'Четвертьфиналы', 'полуфинал': 'Полуфиналы', 'финал': 'Финал' };
+  const game = (st, x) => {
+    const played = x.teams.some(tm => parseFloat(tm.result) > 0);
+    const teams = played ? [...x.teams].sort((a, b) => (+a.place || 99) - (+b.place || 99)) : x.teams;
+    return `<div class="card game">
+      <div class="ghead"><b>${st === 'финал' ? 'Финал' : `${title[st].replace(/ы$/, '')} ${x.num}`}</b><span class="muted">${[x.time, x.hall].filter(Boolean).map(esc).join(' · ')}</span></div>
+      ${teams.map(tm => {
+        const adv = played && (st === 'финал' ? +tm.place === 1 : +tm.place <= 2);
+        return `<div class="gteam ${adv ? 'adv' : ''}"><span class="gpl">${played && tm.place ? esc(tm.place) : ''}</span>
+          <span class="gname">${tm.name ? esc(tm.name) : '<span class="muted">—</span>'}${tm.seed ? `<span class="city">посев ${esc(tm.seed)}</span>` : ''}</span>
+          <span class="gres">${played ? esc(tm.result) : ''}</span></div>`;
+      }).join('')}
+    </div>`;
+  };
+  return `
+    <div class="status"><span class="big">${S.mode === 'live' ? '<span class="live-dot" aria-hidden="true"></span>' : ''}Эрудит-квартет</span>${S.mode === 'live' && S.at ? `<span class="stamp">обновлено в ${hms(S.at)}</span>` : ''}</div>
+    <div class="bracket">${stages.map(s => `<div class="stage"><h3>${title[s.stage]}</h3>${s.games.map(x => game(s.stage, x)).join('')}</div>`).join('')}</div>
+    <p class="muted" style="font-size:.8rem">Из четвертьфиналов и полуфиналов дальше проходят две лучшие команды.</p>`;
+}
+
+/* ---------- Правила: текст документа ---------- */
+function rulesHtml(txt) {
+  const lines = txt.split(/\r?\n/).map(x => x.replace(/ /g, ' ').trim()).filter(Boolean);
+  if (!lines.length) return '';
+  const html = lines.map(l => l.length < 70 && !/[.;:,…»)]$/.test(l) && !/^[\d•*\-–—]/.test(l) ? `<h3>${t(l)}</h3>` : `<p>${t(l)}</p>`).join('');
+  return `<details class="card rules"><summary>Читать правила</summary><div class="rules-body">${html}</div></details>`;
+}
+
 /* ---------- Страницы ---------- */
 function formButtons(which) {
   const L = S.cfg.links, b = [];
   if (which.includes('squads') && L.formSquads) b.push(`<a class="btn btn-main" href="${esc(L.formSquads)}" target="_blank" rel="noopener">Подать состав команды</a>`);
   if (which.includes('reg') && L.formReg) b.push(`<a class="btn btn-soft" href="${esc(L.formReg)}" target="_blank" rel="noopener">Регистрация на КСИ, Эрудит-квартет и «Кубок Риохи»</a>`);
+  if (which.includes('disputed') && L.formDisputed) b.push(`<a class="btn btn-soft" href="${esc(L.formDisputed)}" target="_blank" rel="noopener">Подать спорный ответ</a>`);
   if (which.includes('appeal') && L.formAppeal) b.push(`<a class="btn btn-soft" href="${esc(L.formAppeal)}" target="_blank" rel="noopener">Подать апелляцию</a>`);
   return b.length ? `<div class="btns ${b.length === 2 ? 'two' : ''}">${b.join('')}</div>` : '';
 }
@@ -798,7 +919,8 @@ const pages = {
     if (sub === 'results') body = `<div id="chgk-box" style="display:grid;gap:12px"></div>`;
     if (sub === 'ksi') {
       const f = firstSlot('ksi'), topics = f?.title.match(/\(([^)]*)\)/)?.[1];
-      body = S.ksi && S.ksi.length > 1 ? genericTable(S.ksi)
+      const ks = ksiStandings();
+      body = ks ? ksiTable(ks) : S.ksi && S.ksi.length > 1 ? genericTable(S.ksi)
         : `<div class="card empty"><p><b>Командная своя игра</b>${f ? ` — ${esc(slotWhen(f))}` : ''}${topics ? `, ${t(topics)}` : ''}. Результаты появятся здесь после игры.</p></div>`;
     }
     if (sub === 'ek') {
@@ -810,7 +932,8 @@ const pages = {
         let st = stages.find(s => s.name === stageName); if (!st) stages.push(st = { name: stageName, games: [] });
         for (const n of nums) st.games.push({ label: n ? `${stageName.replace(/ы$/, '')} ${n}` : stageName, time: fmt(g.from) });
       }
-      body = S.ek && S.ek.length > 1 ? genericTable(S.ek) : `<p class="muted">${games[0] ? `${t(games[0].day.label)}, с ${fmt(games[0].from)}.` : ''} Результаты появятся по ходу игр.</p>
+      const ekg = ekGames();
+      body = ekg ? ekBracket(ekg) : `<p class="muted">${games[0] ? `${t(games[0].day.label)}, с ${fmt(games[0].from)}.` : ''} Результаты появятся по ходу игр.</p>
         <div class="bracket">${stages.map(s => `<div class="stage"><h3>${t(s.name)}</h3><div class="card">${s.games.map(g => `<div class="match"><b>${t(g.label)}</b><span class="muted">${g.time}</span></div>`).join('')}</div></div>`).join('')}</div>`;
     }
     return `
@@ -831,20 +954,21 @@ const pages = {
     return `
     <div class="wrap main info">
       <div class="page-head"><h1>Инфо</h1></div>
-      <nav class="toc" aria-label="На этой странице"><a href="#info" data-jump="i-rules">Правила</a><a href="#info" data-jump="i-appeals">Апелляции</a><a href="#info" data-jump="i-crew">Кто проводит</a><a href="#info" data-jump="i-guests">Гостям</a></nav>
+      <nav class="toc" aria-label="На этой странице"><a href="#info" data-jump="i-rules">Правила</a><a href="#info" data-jump="i-appeals">Спорные и апелляции</a><a href="#info" data-jump="i-crew">Кто проводит</a><a href="#info" data-jump="i-guests">Гостям</a></nav>
       <section id="i-rules"><h2>Правила и регламенты</h2>
-        ${c.links.rules ? `<a class="btn btn-soft" href="${esc(c.links.rules)}" target="_blank" rel="noopener">Открыть правила и регламенты</a>` : '<p>Готовятся и появятся здесь.</p>'}
+        ${S.rulesTxt ? rulesHtml(S.rulesTxt) : ''}
+        ${c.links.rules ? `<a class="btn btn-soft" href="${esc(c.links.rules)}" target="_blank" rel="noopener">Открыть документ с правилами</a>` : '<p>Готовятся и появятся здесь.</p>'}
         ${sizes.length ? `<p>ЧГК: ${sizes.length} ${plural(sizes.length, 'тур', 'тура', 'туров')}, ${total} ${plural(total, 'вопрос', 'вопроса', 'вопросов')} (${sizes.join(' + ')})${tourDays.length ? `: ${tourDays.map(([d, n]) => `${n} ${plural(n, 'тур', 'тура', 'туров')} в ${inDay(d)}`).join(', ')}` : ''}.${st?.hasEs ? ' Кроме общего зачёта, есть испанский.' : ''}</p>` : ''}
       </section>
-      <section id="i-appeals"><h2>Апелляции</h2>
-        <p>Принимаются только апелляции на зачёт ответа. Апелляционное жюри судит по правилам КВРМ. В форме нужно оставить контакт для возврата апелляционного залога.</p>
-        ${formButtons(['appeal'])}
+      <section id="i-appeals"><h2>Спорные и апелляции</h2>
+        <p>Принимаются только апелляции на зачёт ответа. Апелляционное жюри судит по правилам КВРМ. В форме апелляции нужно оставить контакт для возврата апелляционного залога.</p>
+        ${formButtons(['disputed', 'appeal'])}
       </section>
       <section id="i-crew"><h2>Кто проводит</h2>
         <dl class="card crew">${crew.map(([k, v]) => `<dt>${k}</dt><dd>${t(v)}</dd>`).join('')}</dl>
         <p class="muted" style="font-size:.85rem">По данным <a href="https://rating.chgk.info/tournament/${R.id}" target="_blank" rel="noopener">страницы турнира на rating.chgk.info</a>.</p>
       </section>
-      <section id="i-forms"><h2>Формы</h2>${formButtons(['squads', 'reg', 'appeal'])}</section>
+      <section id="i-forms"><h2>Формы</h2>${formButtons(['squads', 'reg', 'disputed', 'appeal'])}</section>
       <section id="i-guests"><h2>Гостям Валенсии</h2>
         <div class="tips">
           ${c.venue ? `<article class="card"><h3>Площадка</h3><p>${t(c.venue)}.${c.map ? ` <a href="${esc(c.map)}" target="_blank" rel="noopener">Открыть на карте</a>` : ''}</p></article>` : ''}
