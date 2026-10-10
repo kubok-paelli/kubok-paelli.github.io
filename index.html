@@ -873,7 +873,7 @@ function rulesHtml(txt, link) {
     flush();
     return html;
   };
-  const name = d => /что\?\s*где\?\s*когда/i.test(d.title) ? '«Что? Где? Когда?»' : /сво(ей|я)\s+игр/i.test(d.title) ? 'Командная своя игра'
+  const name = d => /что\?\s*где\?\s*когда/i.test(d.title) ? 'Что? Где? Когда?' : /сво(ей|я)\s+игр/i.test(d.title) ? 'Командная своя игра'
     : /эрудит/i.test(d.title) ? 'Эрудит-квартет' : d.title || 'Читать правила';
   const src = link ? `<p class="rules-src"><a href="${esc(link)}" target="_blank" rel="noopener">Открыть в Google Документах</a></p>` : '';
   return docs.map(d => `<details class="card rules"><summary>${t(name(d))}</summary><div class="rules-body">
