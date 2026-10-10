@@ -812,6 +812,10 @@ function ekGames() {
     games.push({ stage: m[1].toLowerCase(), num: m[2] || '', time: m[3] ? `${+m[3]}:${m[4]}` : '', hall: m[5] || '', teams });
   }
   if (!games.length) return null;
+  // 10.10.2026: в «ЭК сетке» формулы H5:H7 полуфинала 1 смотрят во вкладку ЧФ1 вместо ПФ1 и дают 0.
+  // По просьбе Кирилла показываем очки из ИТОГО вкладки ПФ1 (игра сыграна, числа не изменятся); если в сетке появится не 0 — берём сетку.
+  const EK_FIX = { 'полуфинал 1': { 'jamón everybody': '-160', 'первое свидание': '100', 'так тоже можно': '280' } };
+  for (const x of games) { const fix = EK_FIX[`${x.stage} ${x.num}`]; if (fix) for (const tm of x.teams) if (fix[norm(tm.name)] && (tm.result === '' || +tm.result === 0)) tm.result = fix[norm(tm.name)]; }
   return EK_STAGES.map(st => ({ stage: st, games: games.filter(x => x.stage === st).sort((a, b) => (+a.num || 0) - (+b.num || 0)) })).filter(x => x.games.length);
 }
 function ekBracket(stages) {
