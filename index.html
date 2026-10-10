@@ -311,8 +311,14 @@ tbody tr:last-child td { border-bottom: 0; }
 .gteam.adv { background: var(--lead-bg); box-shadow: inset 4px 0 0 var(--take); }
 .gteam.adv .gpl { color: var(--fg); }
 .rules summary { cursor: pointer; padding: 14px 16px; font: 600 1rem/1.3 var(--f-ui); }
-.rules-body { padding: 0 16px 16px; display: grid; gap: 8px; }
-.rules-body h3 { margin-top: 8px; font-size: 1rem; }
+.rules + .rules { margin-top: 8px; }
+.rules-body { padding: 0 16px 18px; display: grid; gap: 8px; line-height: 1.5; }
+.rules-body h3 { font: 800 1.15rem/1.25 var(--f-display); margin-top: 2px; text-wrap: balance; }
+.rules-body .rules-sub { color: var(--muted); font-size: .9rem; margin-top: -4px; }
+.rules-body h4 { font: 700 1.02rem/1.3 var(--f-ui); margin: 12px 0 0; padding-top: 12px; border-top: 1px solid var(--line); }
+.rules-body .num { font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+.rules-body ul { margin: -2px 0 0; padding-left: 1.3em; display: grid; gap: 4px; }
+.rules-body li::marker { color: var(--accent); }
 .rules-src { margin-top: 6px; font-size: .85rem; }
 
 /* Инфо */
@@ -840,12 +846,38 @@ function ekBracket(stages) {
 }
 
 /* ---------- Правила: текст документа ---------- */
+// Документ организаторов может содержать несколько «Положений» (ЧГК, КСИ, ЭК) — каждое показываем своим раскрывающимся блоком.
+// Разметку берём из самого текста: «1. Раздел» — заголовок, «1.1. …» — пункт с выделенным номером, «* …» — список.
 function rulesHtml(txt, link) {
-  const lines = txt.split(/\r?\n/).map(x => x.replace(/ /g, ' ').trim()).filter(Boolean);
+  const lines = txt.split(/\r?\n/).map(x => x.replace(/ /g, ' ').trim()).filter(l => l && !/^_{3,}$/.test(l));
   if (!lines.length) return '';
-  const html = lines.map(l => l.length < 70 && !/[.;:,…»)]$/.test(l) && !/^[\d•*\-–—]/.test(l) ? `<h3>${t(l)}</h3>` : `<p>${t(l)}</p>`).join('');
+  const isTitle = l => /^﻿?положение\s/i.test(l); // \b в JS не понимает кириллицу
+  const docs = [];
+  for (const l of lines) {
+    if (isTitle(l) || !docs.length) docs.push({ title: isTitle(l) ? l : '', sub: '', body: [] });
+    const d = docs.at(-1);
+    if (l === d.title) continue;
+    if (d.title && !d.sub && !d.body.length && !/^\d/.test(l)) { d.sub = l; continue; } // строка под названием: «Международный фестиваль…»
+    d.body.push(l);
+  }
+  const body = ls => {
+    let html = '', list = [];
+    const flush = () => { if (list.length) { html += `<ul>${list.map(x => `<li>${t(x)}</li>`).join('')}</ul>`; list = []; } };
+    for (const l of ls) {
+      const li = l.match(/^[*•]\s+(.*)$/);
+      if (li) { list.push(li[1]); continue; }
+      flush();
+      const item = l.match(/^(\d+\.\d+\.?)\s+(.*)$/), sec = l.match(/^\d+\.\s+\D/);
+      html += item ? `<p><b class="num">${esc(item[1])}</b> ${t(item[2])}</p>` : sec && l.length < 90 ? `<h4>${t(l)}</h4>` : `<p>${t(l)}</p>`;
+    }
+    flush();
+    return html;
+  };
+  const name = d => /что\?\s*где\?\s*когда/i.test(d.title) ? '«Что? Где? Когда?»' : /сво(ей|я)\s+игр/i.test(d.title) ? 'Командная своя игра'
+    : /эрудит/i.test(d.title) ? 'Эрудит-квартет' : d.title || 'Читать правила';
   const src = link ? `<p class="rules-src"><a href="${esc(link)}" target="_blank" rel="noopener">Открыть в Google Документах</a></p>` : '';
-  return `<details class="card rules"><summary>Читать правила</summary><div class="rules-body">${html}${src}</div></details>`;
+  return docs.map(d => `<details class="card rules"><summary>${t(name(d))}</summary><div class="rules-body">
+    ${d.title ? `<h3>${t(d.title)}</h3>` : ''}${d.sub ? `<p class="rules-sub">${t(d.sub)}</p>` : ''}${body(d.body)}${src}</div></details>`).join('');
 }
 
 /* ---------- Страницы ---------- */
